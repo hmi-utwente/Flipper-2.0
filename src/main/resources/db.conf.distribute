@@ -1,0 +1,5 @@
+#Flipper Postgres Database specification
+host=things.ewi.utwente.nl
+database=xxxxxxx
+role=xxxxxxxx
+password=xxxxxxxx

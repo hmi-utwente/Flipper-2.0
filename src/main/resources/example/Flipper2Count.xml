@@ -1,0 +1,68 @@
+<behaviourtemplates>
+        
+    <is name="counter">
+        {
+            "value" : 1
+        }
+    </is>
+	
+	<javascript>
+			function addOne(i) {
+    			return i + 1;
+			}
+	</javascript>
+	
+    <template id="1" name="Template A">
+    
+      <preconditions mode="and">
+      
+      	  	<javascript><![CDATA[
+				function chkBound(i, bound) {
+    				return i < bound;
+				}
+			]]></javascript>
+			
+          	<condition> chkBound(is.counter.value, 5) </condition>
+          	
+			<function class="hmi.flipper2.example.Dynamic" name="alwaysTrue"> </function>
+          	
+      </preconditions>
+
+       <effects>
+      
+          <assign is="is.counter.value"> addOne( is.counter.value ) </assign> 
+     
+     	  <function class="hmi.flipper2.example.Dynamic" name="f">
+              <arguments>
+                  <value class="Double" is="is.counter.value"/>
+              </arguments>
+          </function>
+
+		<method is="is.counter.timestwo" class="hmi.flipper2.example.Dynamic" name="fplus">
+			<arguments>
+				<value class="Double" is="is.counter.value" />
+				<value class="Double" is="is.counter.value" />
+			</arguments>
+		</method>
+		
+		<method is="is.counter.timestwoplusbase" class="hmi.flipper2.example.Dynamic" name="fplus">
+			<constructors>
+				<value class="Double" constant="1000" />
+			</constructors>
+			<arguments>
+				<value class="Double" is="is.counter.value" />
+				<value class="Double" is="is.counter.value" />
+			</arguments>
+		</method>
+          
+        <method is="is.counter.jsonex" is_type="JSONString" class="hmi.flipper2.example.Dynamic" name="fjson">
+              <arguments>
+                  <value is="is" is_type="JSONString"/>
+              </arguments>
+        </method>  
+          
+       </effects>
+    
+    </template>
+    
+</behaviourtemplates>
