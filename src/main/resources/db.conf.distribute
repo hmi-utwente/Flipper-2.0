@@ -1,4 +1,6 @@
-#Flipper Postgres Database specification
+# Flipper2.0 Postgres Database specification distribution file
+# Copy this file to db.config.local and fill in the correct values
+# this db.config.local file will never be pushed to github
 host=things.ewi.utwente.nl
 database=xxxxxxx
 role=xxxxxxxx
