@@ -12,8 +12,8 @@ public class TemplateController {
 		
 	public static void main(String[] args) {
 		try {
-			// Database db = null;
-			Database db = Database.openDatabaseFromConfig();
+			Database db = null;
+			// Database db = Database.openDatabaseFromConfig();
 			TemplateController tc = create("Test", "A test setup", db);			
 			tc.addTemplateFile( tc.resourcePath("example/Flipper2Count.xml") );
 			// tc.addTemplateFile( tc.resourcePath("example/ChoiceExample.xml") );

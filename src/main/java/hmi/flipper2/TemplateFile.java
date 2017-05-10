@@ -94,7 +94,7 @@ public class TemplateFile {
 	private void init(String db_is_value) throws FlipperException {
 		// first declate the is
 		tc.is.declare_tf(this, (db_is_value==null?this.is_json_value:db_is_value));	
-		if ( this.db_init_sql != null || this.db_init_java != null ) {
+		if ( (this.db_init_sql.size() > 0) || (this.db_init_java.size() > 0) ) {
 			Database db = tc.is.getDatabase();
 			if ( db == null )
 				throw new FlipperException("<db> section in database without default Database");
