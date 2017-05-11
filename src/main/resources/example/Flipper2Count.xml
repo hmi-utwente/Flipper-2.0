@@ -24,7 +24,7 @@
 			
           	<condition> chkBound(is.counter.value, 5) </condition>
           	
-<!-- 			<function class="hmi.flipper2.example.Dynamic" name="alwaysTrue"> </function> -->
+			<function class="hmi.flipper2.example.Dynamic" name="alwaysTrue"> </function>
           	
       </preconditions>
 

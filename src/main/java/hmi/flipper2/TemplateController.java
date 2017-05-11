@@ -10,35 +10,9 @@ import hmi.flipper2.sax.SimpleSAXParser;
 
 public class TemplateController {
 		
-	public static void main(String[] args) {
-		try {
-			Database db = null;
-			// Database db = Database.openDatabaseFromConfig();
-			TemplateController tc = create("Test", "A test setup", db);			
-			tc.addTemplateFile( tc.resourcePath("example/Flipper2Count.xml") );
-			// tc.addTemplateFile( tc.resourcePath("example/ChoiceExample.xml") );
-			// tc.addTemplateFile( tc.resourcePath("example/PersonDbExample.xml") );
-			
-			int maxcount = 10;
-			int count = 0;
-			boolean changed = true;
-			while( changed && (count < maxcount) ) {
-				System.out.println("\nIS:\n---\n"+tc.getIs("is")+"\n");
-				changed = tc.checkTemplates();
-				count++;
-			}
-			
-			tc.destroy();
-		} catch (FlipperException e) {
-			FlipperException.handle(e);
-		}
-	}
-	
 	public static TemplateController create(String name, String descr, Database db) throws FlipperException {
-		if ( db != null ) {
-				db.reset();
+		if ( db != null )
 				db.createController(name, descr);
-		}
 		return new TemplateController(name, db);
 	}
 	
@@ -105,7 +79,7 @@ public class TemplateController {
 		}
 	}
 	
-	String resourcePath(String r) throws FlipperException {
+	public String resourcePath(String r) throws FlipperException {
 		URL url = this.getClass().getClassLoader().getResource(r);
 		if ( url == null )
 			throw new FlipperException("Resource file: " + r + " not found");

@@ -40,7 +40,7 @@ public class Database {
 		}
 	}
 	
-	public Database() {
+	Database() {
 	}
 
 	public Database(String url, String user, String password) throws FlipperException {
@@ -273,6 +273,7 @@ public class Database {
 	
 	private static final String DB_CONFIG_FILE_NAME = "db.conf.local";
 	
+	
 	public static Database openDatabaseFromConfig() throws FlipperException{
 		String host =null, database = null, role = null, password = null;
 		InputStream inputStream = null;
@@ -282,17 +283,18 @@ public class Database {
 			if (inputStream != null) {
 				prop.load(inputStream);
 			} else {
-				throw new FileNotFoundException("No DB config property file '" + DB_CONFIG_FILE_NAME + "' found in the classpath");
+				throw new FlipperException("\n! No DB config property file '" + DB_CONFIG_FILE_NAME + "' found in the resources directory.\n!Copy db.conf.distribute to db.conf.local and fill in the connection details. ");
 			} 
 			host = prop.getProperty("host");
 			database = prop.getProperty("database");
 			role = prop.getProperty("role");
 			password = prop.getProperty("password");
 		} catch (Exception e) {
-			throw new FlipperException(e,"Bad DB config property file in resources directory: "+DB_CONFIG_FILE_NAME);
+			throw new FlipperException("\n!No (or bad) DB config property file '" + DB_CONFIG_FILE_NAME + "' found in the resources directory.\n!Copy db.conf.distribute to db.conf.local and fill in the connection details. ");
 		} finally {	
 			try {
-				inputStream.close();
+				if ( inputStream != null )
+					inputStream.close();
 			} catch (IOException e) {
 				// IGNORE
 			}
