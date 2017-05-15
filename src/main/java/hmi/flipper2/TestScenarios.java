@@ -25,7 +25,7 @@ public class TestScenarios {
 				System.out.println("\nIS:\n---\n"+tc.getIs("is")+"\n");
 				tc.close();
 			}
-			TemplateController.destroy(scenario, db);
+			// TemplateController.destroy(scenario, db);
 		} catch (FlipperException e) {
 			FlipperException.handle(e);
 		}

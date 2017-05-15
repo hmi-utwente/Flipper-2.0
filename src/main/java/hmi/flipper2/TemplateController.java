@@ -51,7 +51,7 @@ public class TemplateController {
 	public void addTemplateFile(String path) throws FlipperException {
 		try {
 			String xml_str = SimpleSAXParser.readFile(path);
-			TemplateFile tf = new TemplateFile(this, path, xml_str, null);
+			TemplateFile tf = new TemplateFile(this, path, xml_str, null, 0);
 			if ( this.db != null )
 				db.addTemplateFile(this, tf);
 			this.tf_list.add(tf);

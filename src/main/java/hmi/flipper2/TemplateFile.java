@@ -16,16 +16,18 @@ public class TemplateFile {
 	
 	public int    tfid = -1;
 	public String name;
+	public long sync_is;
 	public String path;
 	public String xml_str;
 	public TemplateController tc;
 	private SimpleElement xml_root;
 	
-	public TemplateFile(TemplateController tc, String path, String xml_str, String db_is_value) throws FlipperException  {
+	public TemplateFile(TemplateController tc, String path, String xml_str, String db_is_value, long sync_is) throws FlipperException  {
 		this.tc = tc;
 		this.name = (new File(path)).getName();
 		this.path = path;
 		this.xml_str = xml_str;
+		this.sync_is = sync_is;
 		this.xml_root = SimpleSAXParser.parseString(this.path, xml_str);
 		for (int i = 0; i < this.xml_root.children.size(); i++) {
 			handle_section(this.xml_root.children.get(i));

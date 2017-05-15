@@ -86,6 +86,7 @@ public class Database {
 					"path TEXT," +
 					"xml TEXT," +
 					"json_is JSONB," +
+					"sync_is BIGINT DEFAULT 0," +
 					"created TIMESTAMP," +
 					"updated TIMESTAMP" +
 				    ");");
@@ -166,12 +167,19 @@ public class Database {
 	public void updateTemplateFileIs(TemplateFile tf, String is_value) throws FlipperException {
 		try {
 			// System.out.println("UPDATE TEMPLATE FILE (tf_id="+tf.tfid+"): "+ is_value);
-			String updateTableSQL = "UPDATE flipper_tf SET json_is = to_json(?::json), updated = ? WHERE tfid = ?;";
+			String updateTableSQL = "UPDATE flipper_tf SET json_is = to_json(?::json), sync_is = sync_is+1, updated = ? WHERE tfid = ? RETURNING sync_is;";
 			PreparedStatement preparedStatement = conn.prepareStatement(updateTableSQL);
 			preparedStatement.setString(1, is_value);
 			preparedStatement.setTimestamp(2, getCurrentTimeStamp());
 			preparedStatement.setInt(3, tf.tfid);
-			preparedStatement.executeUpdate();
+			ResultSet rs = preparedStatement.executeQuery();
+			if ( rs.next() ) {
+	            long new_sync_is = rs.getLong("sync_is");
+	            tf.sync_is += 1;
+	            if ( new_sync_is != tf.sync_is)
+	            	throw new FlipperException("updateTemplateFileIs:Is:"+tf.is_name+":concurrent update error");
+			} else
+				throw new FlipperException("updateTemplateFileIs: UNEXPECTED RESULT");  
 		} catch (SQLException e) {
 			throw new FlipperException(e);
 		}
@@ -182,7 +190,7 @@ public class Database {
 		
 		// System.out.println("INCOMPLETE:Database:getTemplateFiles");
 		try {
-			String selectSQL = "SELECT tfid,path,xml,json_is#>>'{}' AS json_is FROM flipper_tf WHERE cid = ?;";
+			String selectSQL = "SELECT tfid,path,xml,json_is#>>'{}' AS json_is,sync_is FROM flipper_tf WHERE cid = ?;";
 			PreparedStatement preparedStatement = conn.prepareStatement(selectSQL);
 			preparedStatement.setInt(1, tc.cid);
 			ResultSet rs = preparedStatement.executeQuery();
@@ -191,8 +199,9 @@ public class Database {
 	            String path = rs.getString("path");
 	            String xml = rs.getString("xml");
 	            String json_is = rs.getString("json_is");
+	            long sync_is = rs.getLong("sync_is");
 	            //
-	            TemplateFile tf = new TemplateFile(tc, path, xml, json_is);
+	            TemplateFile tf = new TemplateFile(tc, path, xml, json_is, sync_is);
 	            tf.tfid = tfid;
 	            res.add(tf);
 			}
