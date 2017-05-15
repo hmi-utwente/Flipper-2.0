@@ -44,8 +44,6 @@ public class Is extends JsEngine {
 					entry.getValue().is_updated = false;
 				}
 			}
-
-			this.db.commit();
 		}
 	}
 	

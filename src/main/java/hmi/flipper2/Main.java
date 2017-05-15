@@ -24,9 +24,10 @@ public class Main {
 				changed = tc.checkTemplates();
 				count++;
 			}
-			tc.destroy();
+			TemplateController.destroy("Test", db);
 		} catch (FlipperException e) {
 			FlipperException.handle(e);
 		}
 	}
+	
 }

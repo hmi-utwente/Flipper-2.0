@@ -22,7 +22,7 @@
 				}
 			]]></javascript>
 			
-          	<condition> chkBound(is.counter.value, 5) </condition>
+          	<condition> chkBound(is.counter.value, 10) </condition>
           	
 			<function class="hmi.flipper2.example.Dynamic" name="alwaysTrue"> </function>
           	

@@ -11,9 +11,18 @@ import hmi.flipper2.sax.SimpleSAXParser;
 public class TemplateController {
 		
 	public static TemplateController create(String name, String descr, Database db) throws FlipperException {
-		if ( db != null )
+		if ( db != null ) {
 				db.createController(name, descr);
+				db.commit();
+		}
 		return new TemplateController(name, db);
+	}
+	
+	public static void destroy(String name, Database db) throws FlipperException {
+		if ( db != null ) {
+				db.destroyController(name);
+				db.commit();
+		}
 	}
 	
 	/*
@@ -70,13 +79,9 @@ public class TemplateController {
 	}
 	
 	public void close() {
-	}
-	
-	public void destroy() throws FlipperException {
-		this.close();
-		if (this.db != null) {
-			db.destroyController(this);
-		}
+		this.name = null;
+		this.db = null;
+		this.is = null;
 	}
 	
 	public String resourcePath(String r) throws FlipperException {

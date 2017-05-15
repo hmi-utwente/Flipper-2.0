@@ -26,6 +26,7 @@ public class Database {
 	
 	public void commit() throws FlipperException {
 		try {
+			// System.out.println("COMMIT!");
 			conn.commit();
 		} catch (SQLException e) {
 			throw new FlipperException(e);
@@ -74,7 +75,7 @@ public class Database {
 			st.execute("CREATE SEQUENCE flipper_global_id;");
 			st.execute("CREATE TABLE flipper("+
 						"cid INT PRIMARY KEY DEFAULT nextval('flipper_global_id')," +
-						"name TEXT," +
+						"name TEXT UNIQUE," +
 					    "description TEXT," +
 						"created TIMESTAMP" +
 					    ");");
@@ -121,12 +122,22 @@ public class Database {
 		}
 	}
 	
-	public void destroyController(TemplateController tc) throws FlipperException {
+	public void destroyController(String name) throws FlipperException {
 		try {
-			String delSQL = "DELETE FROM flipper WHERE cid = ?;";
-			PreparedStatement preparedStatement = conn.prepareStatement(delSQL);
-			preparedStatement.setInt(1, tc.cid);
-			preparedStatement.executeUpdate();
+			PreparedStatement ps;
+			
+			int cid = getControllerID(name);
+			//			//
+			String delSQL1 = "DELETE FROM flipper_tf WHERE cid = ?;";
+			ps = conn.prepareStatement(delSQL1);
+			ps.setInt(1, cid);
+			ps.executeUpdate();
+			//
+			String delSQL2 = "DELETE FROM flipper WHERE cid = ?;";
+			ps = conn.prepareStatement(delSQL2);
+			ps.setInt(1, cid);
+			ps.executeUpdate();
+			
 		} catch (SQLException e) {
 			throw new FlipperException(e);
 		}
@@ -154,6 +165,7 @@ public class Database {
 	
 	public void updateTemplateFileIs(TemplateFile tf, String is_value) throws FlipperException {
 		try {
+			// System.out.println("UPDATE TEMPLATE FILE (tf_id="+tf.tfid+"): "+ is_value);
 			String updateTableSQL = "UPDATE flipper_tf SET json_is = to_json(?::json), updated = ? WHERE tfid = ?;";
 			PreparedStatement preparedStatement = conn.prepareStatement(updateTableSQL);
 			preparedStatement.setString(1, is_value);
@@ -170,16 +182,18 @@ public class Database {
 		
 		// System.out.println("INCOMPLETE:Database:getTemplateFiles");
 		try {
-			String selectSQL = "SELECT path,xml,json_is#>>'{}' AS json_is FROM flipper_tf WHERE cid = ?;";
+			String selectSQL = "SELECT tfid,path,xml,json_is#>>'{}' AS json_is FROM flipper_tf WHERE cid = ?;";
 			PreparedStatement preparedStatement = conn.prepareStatement(selectSQL);
 			preparedStatement.setInt(1, tc.cid);
 			ResultSet rs = preparedStatement.executeQuery();
 			while ( rs.next() ) {
+				int tfid = rs.getInt("tfid");
 	            String path = rs.getString("path");
-	            String xml_str = rs.getString("xml_str");
+	            String xml = rs.getString("xml");
 	            String json_is = rs.getString("json_is");
 	            //
-	            TemplateFile tf = new TemplateFile(tc, path, xml_str, json_is);
+	            TemplateFile tf = new TemplateFile(tc, path, xml, json_is);
+	            tf.tfid = tfid;
 	            res.add(tf);
 			}
 		} catch (SQLException e) {
@@ -224,40 +238,6 @@ public class Database {
 		
 		sti.close();
 	}
-	
-//	public DefaultRecord get_record(String sql) throws SQLException {
-//		DefaultRecord res = new DefaultRecord();
-//		
-//		Statement st = conn.createStatement();
-//		ResultSet rs = st.executeQuery(sql);
-//		ResultSetMetaData meta = rs.getMetaData();
-//	
-//		if (rs.next()) {
-//			for(int i=1; i<=meta.getColumnCount(); i++) {
-//				System.out.println("Col: "+i + ": "+meta.getColumnLabel(i) + " = " + rs.getObject(i));
-//				res.set(meta.getColumnLabel(i), rs.getObject(i));
-//			}
-//			if ( rs.next() )
-//				throw new SQLException("Too much results for get_record: "+sql);
-//		} else {
-//			throw new SQLException("No result for get_record: "+sql);
-//		}
-//		rs.close();
-//		st.close();
-//		
-//		return res;
-//	}
-	
-//	public static void main( String args[] ) throws SQLException, FlipperException
-//	{
-//		System.out.println("Testing Database");
-//		Database db = new Database("jdbc:postgresql://things.ewi.utwente.nl/flipper", "flipper", "flipper..");
-//		
-//		db.create_Person_Table();
-//		// db.get_record("SELECT * from person WHERE lastname = \'Flokstra\';");
-//
-//		db.close();
-//	}
 	
 	private static java.sql.Timestamp getCurrentTimeStamp() {
 
