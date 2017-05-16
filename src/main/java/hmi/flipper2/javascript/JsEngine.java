@@ -21,43 +21,36 @@ public class JsEngine {
 	}
 
 	public JsValue execute(String script) throws FlipperException {
-		try {
-			JsValue res = null;
-			
-			// System.out.println("!!JSE: "+script);
-			Object retval = engine.eval(script);
-			// JSOBject jso;
-			if ( retval != null ) {
-				res = new JsObjectValue(retval);
-				// System.out.println("!!!RETURN["+retval.getClass().getName()+"]: "+res);
-			}
-			return res;
-		} catch (ScriptException e) {
-			throw new FlipperException(e, script);
+		JsValue res = null;
+
+		Object retval = eval(script);
+		if (retval != null) {
+			res = new JsObjectValue(retval);
 		}
+		return res;
 	}
 	
 	public Object eval(String script) throws FlipperException {
 		try {
 			return engine.eval(script);
 		} catch (ScriptException e) {
-			throw new FlipperException(e, script);
+			int count = 1;
+			StringBuffer sb = new StringBuffer();
+			for (String line : script.split("\\r?\\n"))
+				sb.append(String.format("%3d ", count++) + line + "\n");
+			throw new FlipperException(e, sb.toString());
 		}
 	}
 	
-	public boolean condition(String script) throws FlipperException {
-		try {
-			Object retval = engine.eval(script);
+	public boolean condition(String js_expr) throws FlipperException {
+			Object retval = eval(js_expr);
 			if (retval != null) {
 				try {
 					return ((Boolean) retval).booleanValue();
 				} catch (ClassCastException e) {
 				}				
 			}
-			throw new FlipperException("Condition not Boolean: " + script);
-		} catch (ScriptException e) {
-			throw new FlipperException(e, script);
-		}
+			throw new FlipperException("Condition not Boolean: " + js_expr);
 	}
 	
 	public String getJSONfromJs(String js_expr) throws FlipperException {
@@ -69,14 +62,8 @@ public class JsEngine {
 	}
 	
 	public void assignJSONtoJs(String var, String json_expr) throws FlipperException {
-		String script = null;
-		
-		try {
-			script = var + "=" + "JSON.parse("+escapeForJava(json_expr, true)+")";
-			engine.eval(script);
-		} catch (ScriptException e) {
-			throw new FlipperException(e, script);
-		}
+		String script = var + "=" + "JSON.parse(" + escapeForJava(json_expr, true) + ")";
+		eval(script);
 	}
 	
 	public void assignObject2Js(String var, Object java_object) throws FlipperException {		
@@ -118,10 +105,6 @@ public class JsEngine {
 	 * 
 	 */
 	
-//	public static void main(String[] args) {
-//		test();
-//	}
-//
 //	public static String is = "var is = { \"name\":\"John\", \"age\":30, \"car\":null }";
 //	
 //	public static void test() {
