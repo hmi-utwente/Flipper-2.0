@@ -12,7 +12,17 @@ public class JavaEffect extends Effect {
 
 	public enum CallMode { CALL_METHOD, CALL_FUNCTION };
 	
+	protected static final String cm2string(CallMode cm) {
+		return (cm==CallMode.CALL_METHOD) ? "METHOD" : "STATIC FUNCTION";
+		
+	}
+	
 	public enum ObjectMode { OBJECT_SINGLE, OBJECT_MULTI };
+	
+	protected static final String om2string(ObjectMode om) {
+		return (om==ObjectMode.OBJECT_SINGLE) ? "SINGLE" : "MULTI";
+		
+	}
 	
 	protected static final Object[] emptyArgs = {};
 	protected static final Class<?> emptyClassArgs[] = {};
@@ -54,10 +64,11 @@ public class JavaEffect extends Effect {
 			} else {
 				this.callObject = this.classObject;
 			}
+		} catch (NoSuchMethodException e) {
+			throw new FlipperException(e, "!Cannot find "+ cm2string(this.callmode) + " " +className+ " " + callName + arguments.toString());
 		} catch (ClassNotFoundException | IllegalArgumentException | InvocationTargetException | InstantiationException
-				| IllegalAccessException | NoSuchMethodException | SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+				| IllegalAccessException | SecurityException e) {
+			throw new FlipperException(e);
 		}
 	}
 	
@@ -66,13 +77,17 @@ public class JavaEffect extends Effect {
 	}
 	
 	protected Object createObject() throws FlipperException, InstantiationException, IllegalAccessException,
-			NoSuchMethodException, SecurityException, IllegalArgumentException, InvocationTargetException {
+			SecurityException, IllegalArgumentException, InvocationTargetException {
 		if (this.constructors.size() == 0) {
 			return this.classObject.newInstance();
 		} else {
-			Class<?> ctypes[] = this.constructors.classArray();
-			Constructor<?> dynConstructor = this.classObject.getConstructor(ctypes);
-			return dynConstructor.newInstance(this.constructors.objectArray());
+			try {
+				Class<?> ctypes[] = this.constructors.classArray();
+				Constructor<?> dynConstructor = this.classObject.getConstructor(ctypes);
+				return dynConstructor.newInstance(this.constructors.objectArray());
+			} catch (NoSuchMethodException e) {
+				throw new FlipperException(e, "!Cannot find constructor " +className + this.constructors.toString() + " for method " + this.callName);
+			}
 		}
 	}
 	
@@ -91,22 +106,26 @@ public class JavaEffect extends Effect {
 		return return_obj;
 	}
 	
+	protected static final String args2string(Object[] method_args) throws FlipperException {
+		StringBuilder sb = new StringBuilder();
+		sb.append("[");
+		for (Object o : method_args) {
+			sb.append(o.getClass().getName());
+			sb.append(" ");
+		}
+		sb.append("]");
+		return sb.toString();
+	}
+	
 	protected Object executeCall(Object[] method_args) throws FlipperException {
 		try {
 			if (this.objectmode == ObjectMode.OBJECT_MULTI)
 				this.callObject = this.createObject();
 			return this.callMethod.invoke(this.callObject, method_args);
-		} catch (IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException
+		} catch (IllegalAccessException | SecurityException | IllegalArgumentException
 				| InvocationTargetException | InstantiationException e) {
-			StringBuilder sb=new StringBuilder();
-			sb.append("[");
-			for(Object o : method_args) {
-				sb.append(o.getClass().getName());
-				sb.append(" ");
-			}
-			sb.append("]");
 			throw new FlipperException(e,
-					"JavaCall failed:JavaEffect:executeCall: " + this.toString() + "\n" + "Arguments=" + sb);
+					"JavaCall failed:JavaEffect:executeCall: " + this.toString() + "\n" + "Arguments=" + args2string(method_args));
 		}
 	}
 	

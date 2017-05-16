@@ -29,4 +29,19 @@ public class JavaValueList extends ArrayList<JavaValue> {
 		return res;
 	}
 	
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for (JavaValue v : this) {
+			if ( sb.length() > 0 )
+				sb.append(',');
+			try {
+				sb.append( v.objectClass().getName());
+			} catch (Exception e) {
+				sb.append( e.toString());
+			}
+		}
+		sb.append("]");
+		return "[" + sb + "]";
+	}
+	
 }

@@ -16,7 +16,7 @@ public class Main {
 			// tc.addTemplateFile( tc.resourcePath("example/ChoiceExample.xml") );
 			// tc.addTemplateFile( tc.resourcePath("example/PersonDbExample.xml") );
 			
-			int maxcount = 10;
+			int maxcount = 5;
 			int count = 0;
 			boolean changed = true;
 			while( changed && (count < maxcount) ) {
