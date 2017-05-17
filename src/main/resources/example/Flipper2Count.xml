@@ -38,6 +38,12 @@
               </arguments>
           </function>
 
+		  <function class="hmi.flipper2.example.Dynamic" name="f">
+				<arguments>
+					<value system="template_id" />
+				</arguments>
+		  </function>
+          
 		<method is="is.counter.timestwo" class="hmi.flipper2.example.Dynamic" name="fplus">
 			<arguments>
 				<value class="Double" is="is.counter.value" />

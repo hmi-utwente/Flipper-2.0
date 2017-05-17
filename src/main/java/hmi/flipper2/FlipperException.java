@@ -71,10 +71,17 @@ public class FlipperException extends Exception {
 		this.extra = "JAVASCRIPT ERROR:\n=================\n"+script+"\n";
 	}
 	
+	private String currentInfo = null;
+	
+	public void registerCurrentTemplate(String current_tf, String current_id, String current_name) {
+		this.currentInfo = "!TemplateFile: " + current_tf + " Tid: " + current_id + " Tname: "  + current_name;
+	}
 	
 	public static void handle(FlipperException e) {
 		if ( e.extra != null )
 			System.err.println(e.extra);
+		if ( e.currentInfo != null )
+			System.err.println(e.currentInfo);
 		System.err.println("!Caught Exception: "+e.text);
 		if (e.stack != null )
 			System.err.println("!Stack: \n"+e.stack);

@@ -108,13 +108,19 @@ public class TemplateController {
 	 */
 	public void addTemplateFile(String path) throws FlipperException {
 		try {
-			String xml_str = SimpleSAXParser.readFile(path);
-			TemplateFile tf = new TemplateFile(this, path, xml_str, null, 0);
-			if ( this.db != null )
-				db.addTemplateFile(this, tf);
-			this.tf_list.add(tf);
-		} catch (IOException e) {
-			throw new FlipperException(e);
+			try {
+
+				String xml_str = SimpleSAXParser.readFile(path);
+				TemplateFile tf = new TemplateFile(this, path, xml_str, null, 0);
+				if (this.db != null)
+					db.addTemplateFile(this, tf);
+				this.tf_list.add(tf);
+			} catch (IOException e) {
+				throw new FlipperException(e);
+			}
+		} catch (FlipperException e) {
+			e.registerCurrentTemplate(this.current_tf, this.current_id, this.current_name);
+			throw e;
 		}
 	}
 	
@@ -130,17 +136,32 @@ public class TemplateController {
 	 *                On all errors.
 	 */
 	public boolean checkTemplates() throws FlipperException {
-		boolean changed = false;
+		try {
+			boolean changed = false;
 
-		for (TemplateFile tf : this.tf_list) {
-			changed = changed || tf.check(this.is);
+			for (TemplateFile tf : this.tf_list) {
+				changed = changed || tf.check(this.is);
+			}
+			if (changed) {
+				is.commit(); // commit the information state
+				if (this.db != null)
+					this.db.commit();
+			}
+			return changed;
+		} catch (FlipperException e) {
+			e.registerCurrentTemplate(this.current_tf, this.current_id, this.current_name);
+			throw e;
 		}
-		if ( changed ) {
-			is.commit(); // commit the information state
-			if (this.db != null)
-				this.db.commit();
-		}
-		return changed;
+	}
+	
+	private String current_tf = null;
+	private String current_id = null;
+	private String current_name = null;
+	
+	public void registerCurrentTemplate(String current_tf, String current_id, String current_name) {
+		this.current_tf = current_tf;
+		this.current_id = current_id;
+		this.current_name = current_name;
 	}
 	
 	/**

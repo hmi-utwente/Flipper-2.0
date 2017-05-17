@@ -70,7 +70,7 @@ public class TemplateFile {
 			if ( db_el.tag.equals("init")) {
 				for (SimpleElement db_iel : db_el.children) {
 					if (db_iel.tag.equals("function") || db_iel.tag.equals("method")) {
-						this.db_init_java.add(Template.handle_effect(tc.is, db_iel));
+						this.db_init_java.add(Template.handle_effect(null, tc.is, db_iel));
 					} else if (db_iel.tag.equals("sql")) {
 						this.db_init_sql.add(db_iel.characters.toString());
 					} else
@@ -117,6 +117,7 @@ public class TemplateFile {
 		boolean res = false;
 		
 		for (Template template : this.templates ) {
+			tc.registerCurrentTemplate(this.name, template.id, template.name);
 			res = res || template.check(is);
 		}
 		return res;
