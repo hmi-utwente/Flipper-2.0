@@ -5,6 +5,8 @@
 .project
 .settings/
 
+# generated Javadoc stuff
+doc/
 
 # configuration file for db acces
 db.conf.local
