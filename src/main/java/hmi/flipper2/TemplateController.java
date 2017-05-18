@@ -203,7 +203,7 @@ public class TemplateController {
 		URL url = this.getClass().getClassLoader().getResource(rpath);
 		if ( url == null )
 			throw new FlipperException("Resource file: " + rpath + " not found");
-		return url.getPath();
+                return url.getPath().replaceFirst("^/(.:/)", "$1");
 	}
 	
 }
