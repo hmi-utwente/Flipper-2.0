@@ -20,7 +20,7 @@ import hmi.flipper2.TemplateFile;
 
 public class Database {
 	
-	private static Logger logger = LoggerFactory.getLogger(Database.class.getName());
+	private static Logger logger = LoggerFactory.getLogger(Database.class);
 	
 	private Connection conn = null;
 	private Properties props = null;
