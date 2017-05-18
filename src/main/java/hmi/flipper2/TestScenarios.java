@@ -13,7 +13,7 @@ public class TestScenarios {
 			String scenario = "TestMultiDB";
 			
 			Database db = Database.openDatabaseFromConfig();
-			db.reset(); // do a complete new start
+			db.clearAll();; // do a complete new start
 			TemplateController tc = TemplateController.create(scenario, "An iterative open/close setup", db);	
 			tc.addTemplateFile( tc.resourcePath("example/Flipper2Count.xml") );
 			tc.close();

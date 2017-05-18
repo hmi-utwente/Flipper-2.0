@@ -9,7 +9,7 @@ public class Main {
 			Database db = null;
 			// Database db = Database.openDatabaseFromConfig();
 			if ( db != null )
-				db.reset(); // do a complete new start
+				db.clearAll(); // do a complete new start
 			TemplateController tc = TemplateController.create("Test", "A test setup", db);
 			//
 			tc.addTemplateFile( tc.resourcePath("example/Flipper2Count.xml") );

@@ -1,7 +1,7 @@
 package hmi.flipper2.postgres;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
@@ -11,7 +11,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -20,6 +19,8 @@ import hmi.flipper2.TemplateController;
 import hmi.flipper2.TemplateFile;
 
 public class Database {
+	
+	private static Logger logger = LoggerFactory.getLogger(Database.class.getName());
 	
 	private Connection conn = null;
 	private Properties props = null;
@@ -41,11 +42,12 @@ public class Database {
 		}
 	}
 	
-	Database() {
+	private Database() {
 	}
 
 	public Database(String url, String user, String password) throws FlipperException {
 		try {
+			logger.trace("Database():connecting to:"+url+" | "+user, Database.class.getName());
 			try {
 				Class.forName("org.postgresql.Driver");
 			} catch (ClassNotFoundException e) {
@@ -66,7 +68,7 @@ public class Database {
 		return this.conn;
 	}
 	
-	public void reset() throws FlipperException {
+	public void clearAll() throws FlipperException {
 		try {
 			Statement st = conn.createStatement();
 			st.execute("DROP TABLE IF EXISTS flipper;");
