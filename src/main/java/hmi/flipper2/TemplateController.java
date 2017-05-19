@@ -125,6 +125,32 @@ public class TemplateController {
 	}
 	
 	/**
+	 * This method removes an Xml template file from a running TemplateController.
+	 * When the TemplateController is persistent in a Database this template
+	 * file is persistently removed from the controller.
+	 * 
+	 * @param path
+	 *            The path of the XML template file
+	 * @exception FlipperException
+	 *                On all errors.
+	 */
+	public void removeTemplateFile(String path) throws FlipperException {
+		TemplateFile tf_remove = findTemplateFile(path);
+		tf_remove.deactivate();
+		if (this.db != null)
+			db.removeTemplateFile(this, tf_remove);
+		this.tf_list.remove( tf_remove );
+	}
+	
+	private TemplateFile findTemplateFile(String path) throws FlipperException {
+		for(TemplateFile tf: this.tf_list) {
+			if ( tf.path.equals(path) )
+				return tf;
+		}
+		throw new FlipperException("findTemplateFile:not found:"+path);
+	}
+	
+	/**
 	 * This method checks all Templates if the preconditions are true and fires
 	 * the Effects and Behaviours when necessary. When the controller is
 	 * persistent the Information State is saved in the Datababase and the

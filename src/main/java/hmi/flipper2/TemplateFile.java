@@ -32,7 +32,7 @@ public class TemplateFile {
 		for (int i = 0; i < this.xml_root.children.size(); i++) {
 			handle_section(this.xml_root.children.get(i));
 		}
-		init(db_is_value);
+		activate(db_is_value);
 	}
 	
 	private void handle_section(SimpleElement el) throws FlipperException {
@@ -93,9 +93,8 @@ public class TemplateFile {
 	 * 
 	 */
 	
-	private void init(String db_is_value) throws FlipperException {
-		// first declate the is
-		tc.is.declare_tf(this, (db_is_value==null?this.is_json_value:db_is_value));	
+	private void activate(String db_is_value) throws FlipperException {
+		tc.is.activate_tf(this, (db_is_value==null?this.is_json_value:db_is_value));	
 		if ( (this.db_init_sql.size() > 0) || (this.db_init_java.size() > 0) ) {
 			Database db = tc.is.getDatabase();
 			if ( db == null )
@@ -105,6 +104,21 @@ public class TemplateFile {
 					db.executeScript(sql);
 			} if ( this.db_init_java != null )
 				this.db_init_java.doIt(tc.is);
+		}
+	}
+	
+	public void deactivate() throws FlipperException {
+		tc.is.deactivate_tf(this);
+		if ((this.db_cleanup_sql.size() > 0) || (this.db_cleanup_java.size() > 0)) {
+			Database db = tc.is.getDatabase();
+			if (db == null)
+				throw new FlipperException("<db> section in database without default Database");
+			if (this.db_cleanup_sql != null) {
+				for (String sql : this.db_cleanup_sql)
+					db.executeScript(sql);
+			}
+			if (this.db_cleanup_java != null)
+				this.db_cleanup_java.doIt(tc.is);
 		}
 	}
 	

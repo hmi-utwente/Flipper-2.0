@@ -22,6 +22,8 @@ public class Main {
 			tc.addTemplateFile( tc.resourcePath("example/Flipper2Count.xml") );
 			// tc.addTemplateFile( tc.resourcePath("example/ChoiceExample.xml") );
 			// tc.addTemplateFile( tc.resourcePath("example/PersonDbExample.xml") );
+			if ( db != null )
+				db.commit(); // addTemplatefile does not automatically commit()
 			
 			int maxcount = 5;
 			int count = 0;

@@ -89,9 +89,14 @@ public class Is extends JsEngine {
 		return this.getJSONfromJs(path);
 	}
 	
-	public void declare_tf(TemplateFile tf, String json_value) throws FlipperException {
+	public void activate_tf(TemplateFile tf, String json_value) throws FlipperException {
 		assignJSONtoJs("is."+tf.is_name, json_value);
 		is_tf_table.put(tf.is_name, tf);
+	}
+	
+	public void deactivate_tf(TemplateFile tf) throws FlipperException {
+		assignJSONtoJs("is."+tf.is_name, "{}");
+		is_tf_table.remove(tf.is_name);
 	}
 	
 	public enum ValueTransferType { TYPE_OBJECT, TYPE_JSONSTRING};

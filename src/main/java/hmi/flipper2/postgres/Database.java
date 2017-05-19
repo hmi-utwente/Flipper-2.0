@@ -166,6 +166,17 @@ public class Database {
 		}
 	}
 	
+	public void removeTemplateFile(TemplateController tc, TemplateFile tf) throws FlipperException {
+		try {
+			String deleteTableSQL = "DELETE FROM flipper_tf WHERE tfid = ?;";
+			PreparedStatement preparedStatement = conn.prepareStatement(deleteTableSQL);
+			preparedStatement.setInt(1, tf.tfid);
+			preparedStatement.executeUpdate();
+		} catch (SQLException e) {
+			throw new FlipperException(e);
+		}
+	}
+	
 	public void updateTemplateFileIs(TemplateFile tf, String is_value) throws FlipperException {
 		try {
 			// System.out.println("UPDATE TEMPLATE FILE (tf_id="+tf.tfid+"): "+ is_value);
