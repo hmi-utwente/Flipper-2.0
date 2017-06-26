@@ -18,8 +18,12 @@ public class Main {
 			if ( db != null )
 				db.clearAll(); // do a complete new start
 			TemplateController tc = TemplateController.create("Test", "A test setup", db);
-			//
+			//TemplateController tc = TemplateController.create("Test", "A test setup", db, new String[] {
+			//	"jslibs/underscore-min.js"
+			//});
+				
 			tc.addTemplateFile( tc.resourcePath("example/Flipper2Count.xml") );
+			//tc.addTemplateFile( tc.resourcePath("example/Underscore.xml") );
 			// tc.addTemplateFile( tc.resourcePath("example/ChoiceExample.xml") );
 			// tc.addTemplateFile( tc.resourcePath("example/PersonDbExample.xml") );
 			if ( db != null )

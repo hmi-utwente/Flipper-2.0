@@ -1,9 +1,13 @@
 package hmi.flipper2;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import hmi.flipper2.postgres.Database;
 import hmi.flipper2.sax.SimpleSAXParser;
@@ -44,12 +48,38 @@ public class TemplateController {
 	}
 	
 	/**
+	 * This method creates a new TemplateController.
+	 * 
+	 * @param name
+	 *            The name of the TemplateController. When db != null this name
+	 *            has to be unique .
+	 * @param descr
+	 *            A description what this Controller does and is used for.
+	 * @param db
+	 *            The database used by this TemplateController, may be null for
+	 *            non-persistent Controller.
+	 * @return A running TemplateController. This TemplateController is
+	 *         persistent in the database when db != null
+	 * @exception FlipperException
+	 *                On all errors.
+	 */
+	public static TemplateController create(String name, String descr, Database db, String[] jslibs) throws FlipperException {
+		if ( db != null ) {
+				db.createController(name, descr);
+				db.commit();
+		}
+		return new TemplateController(name, db, jslibs);
+	}
+	
+	/**
 	 * This method destroys a persistent TemplateController.
 	 * 
 	 * @param name
 	 *            The name of the existing TemplateController in the Database.
 	 * @param db
 	 *            The Database the TemplateController is stored. When db == null the method does nothing.
+	 * @param jslibs
+	 * 			  String array of additional js libs to preload. 
 	 * @exception FlipperException
 	 *                On all errors.
 	 */
@@ -93,6 +123,36 @@ public class TemplateController {
 		} else {
 			this.cid = -1;
 			this.tf_list = new ArrayList<TemplateFile>();
+		}
+	}
+	
+	/**
+	 * This method constructs a running TemplateController.
+	 * 
+	 * @param name
+	 *            The name of the TemplateController. When db != null the
+	 *            TemplateController name has to exist in the Database.
+	 *            Otherwise use TemplateController.create().
+	 * @param db
+	 *            The database used by this TemplateController, may be null for
+	 *            a non-persistent Controller.
+	 * @param jslibs
+	 * 			  String array of additional js libs to preload. 
+	 * @exception FlipperException
+	 *                On all errors.
+	 */
+	public TemplateController(String name, Database db, String[] jslibs) throws FlipperException {
+		this(name, db);
+		
+		for (String libPath : jslibs) {
+			InputStream libStream = this.getClass().getClassLoader().getResourceAsStream(libPath);
+			if (libStream == null) {
+				throw new FlipperException("Cannot find jslib resource in classpath: "+libPath);
+			} else {
+		        String libCode = new BufferedReader(new InputStreamReader(libStream))
+		        		  .lines().collect(Collectors.joining("\n"));
+				is.eval(libCode);
+			}
 		}
 	}
 	
