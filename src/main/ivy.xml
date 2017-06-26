@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<ivy-module version="2.0">
+  <info organisation="HMI" module="flipper2.0"/>
+  <configurations>
+    <include file="${ivy.settings.dir}/configurations.xml"/>
+  </configurations>
+  <dependencies>
+    <dependency org="slf4j" name="slf4j-api" rev="latest.release"/>
+    <dependency org="logback" name="logback-classic" rev="latest.release"/>
+    <dependency org="logback" name="logback-core" rev="latest.release"/>
+  </dependencies>
+</ivy-module>
