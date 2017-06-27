@@ -97,6 +97,36 @@ public class TemplateController {
 	}
 	
 	/**
+	 * This method constructs a running TemplateController.
+	 * 
+	 * @param name
+	 *            The name of the TemplateController. When db != null the
+	 *            TemplateController name has to exist in the Database.
+	 *            Otherwise use TemplateController.create().
+	 * @param db
+	 *            The database used by this TemplateController, may be null for
+	 *            a non-persistent Controller.
+	 * @param jslibs
+	 * 			  String array of additional js libs to preload. 
+	 * @exception FlipperException
+	 *                On all errors.
+	 */
+	public TemplateController(String name, Database db, String[] jslibs) throws FlipperException {
+		this(name, db);
+		for (String libPath : jslibs) {
+			InputStream libStream = this.getClass().getClassLoader().getResourceAsStream(libPath);
+			if (libStream == null) {
+				throw new FlipperException("Cannot find jslib resource in classpath: "+libPath);
+			} else {
+		        String libCode = new BufferedReader(new InputStreamReader(libStream))
+		        		  .lines().collect(Collectors.joining("\n"));
+				is.eval(libCode);
+			}
+		}
+	}
+	
+	/**
+>>>>>>> 9f3f8d3... fixes #2
 	 * This method adds an Xml template file to a running TemplateController.
 	 * When the TemplateController is persistent in a Database this template
 	 * file is persistently added to the controller.
@@ -166,7 +196,7 @@ public class TemplateController {
 			boolean changed = false;
 
 			for (TemplateFile tf : this.tf_list) {
-				changed = changed || tf.check(this.is);
+				changed = tf.check(this.is) || changed;
 			}
 			if (changed) {
 				is.commit(); // commit the information state
