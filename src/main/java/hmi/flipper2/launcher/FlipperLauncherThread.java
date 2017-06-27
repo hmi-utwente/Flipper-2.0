@@ -103,7 +103,7 @@ public class FlipperLauncherThread extends Thread {
 			
 			LogIS(0);
 		} catch (FlipperException e) {
-			e.extra = "FlipperLauncherThread: setup failed";
+			e.extra += "\nFlipperLauncherThread: setup failed";
 			stop = true;
 			FlipperException.handle(e);
 		}
