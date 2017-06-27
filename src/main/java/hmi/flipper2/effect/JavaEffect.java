@@ -65,7 +65,7 @@ public class JavaEffect extends Effect {
 				this.callObject = this.classObject;
 			}
 		} catch (NoSuchMethodException e) {
-			throw new FlipperException(e, "!Cannot find "+ cm2string(this.callmode) + " " +className+ " " + callName + arguments.toString());
+			throw new FlipperException(e, "!Cannot find "+ cm2string(this.callmode) + " " + this.className + " " + this.callName + this.arguments.toString());
 		} catch (ClassNotFoundException | IllegalArgumentException | InvocationTargetException | InstantiationException
 				| IllegalAccessException | SecurityException e) {
 			throw new FlipperException(e);
