@@ -166,7 +166,7 @@ public class TemplateController {
 			boolean changed = false;
 
 			for (TemplateFile tf : this.tf_list) {
-				changed = changed || tf.check(this.is);
+				changed = tf.check(this.is) || changed;
 			}
 			if (changed) {
 				is.commit(); // commit the information state
