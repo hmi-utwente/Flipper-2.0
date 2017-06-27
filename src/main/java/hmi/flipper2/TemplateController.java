@@ -143,7 +143,6 @@ public class TemplateController {
 	 */
 	public TemplateController(String name, Database db, String[] jslibs) throws FlipperException {
 		this(name, db);
-		
 		for (String libPath : jslibs) {
 			InputStream libStream = this.getClass().getClassLoader().getResourceAsStream(libPath);
 			if (libStream == null) {
