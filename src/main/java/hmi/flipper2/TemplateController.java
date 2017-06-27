@@ -143,7 +143,6 @@ public class TemplateController {
 	 */
 	public TemplateController(String name, Database db, String[] jslibs) throws FlipperException {
 		this(name, db);
-		
 		for (String libPath : jslibs) {
 			InputStream libStream = this.getClass().getClassLoader().getResourceAsStream(libPath);
 			if (libStream == null) {
@@ -226,7 +225,7 @@ public class TemplateController {
 			boolean changed = false;
 
 			for (TemplateFile tf : this.tf_list) {
-				changed = changed || tf.check(this.is);
+				changed = tf.check(this.is) || changed;
 			}
 			if (changed) {
 				is.commit(); // commit the information state

@@ -129,10 +129,10 @@ public class TemplateFile {
 	
 	public boolean check(Is is) throws FlipperException {	
 		boolean res = false;
-		
+
 		for (Template template : this.templates ) {
 			tc.registerCurrentTemplate(this.name, template.id, template.name);
-			res = res || template.check(is);
+			res =  template.check(is) || res;
 		}
 		return res;
 	}
