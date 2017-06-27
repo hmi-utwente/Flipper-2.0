@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="flipper2.0"  default="run">
-    <import file="../../../hmibuild/build.xml" />
+    <import file="../../hmibuild/build.xml" />
 </project>
