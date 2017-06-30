@@ -113,9 +113,14 @@ public class Template {
 	private static JavaValueList handle_value_list(Template template, Is is, SimpleElement list) throws FlipperException {
 		JavaValueList jvl = new JavaValueList();	
 		for (SimpleElement val : list.children) {
-			if (  val.attr.get("constant") != null )
-				jvl.add( new ConstantJavaValue(val.attr.get("class"),val.attr.get("constant")));
-			else if (  val.attr.get("system") != null ) {	
+			if (  val.attr.get("constant") != null || // Value of constant defined in body:
+					(val.attr.get("class") != null && val.characters != null && val.characters.length() > 0)) { 
+				if (val.attr.get("constant") != null) {
+					jvl.add( new ConstantJavaValue(val.attr.get("class"),val.attr.get("constant")));
+				} else {
+					jvl.add( new ConstantJavaValue(val.attr.get("class"), val.characters.toString()));
+				}
+			} else if (  val.attr.get("system") != null ) {	
 				String sys = val.attr.get("system");	
 				if ( sys.equals("template_id")) {	
 					if ( template == null )
