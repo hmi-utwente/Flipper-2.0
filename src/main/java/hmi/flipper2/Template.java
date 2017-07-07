@@ -79,29 +79,44 @@ public class Template {
 		} else if (ee.tag.equals("db")) {
 			throw new RuntimeException("INCOMPLETE: DB ELEMENT: " + ee);
 		} else if (ee.tag.equals("function") || ee.tag.equals("method") || ee.tag.equals("behaviour")) {
+			boolean isFunction = ee.tag.equals("function");
 			String a_is = ee.attr.get("is");
 			String a_is_type = ee.attr.get("is_type");
 			String a_class = ee.attr.get("class");
+			if ( !isFunction && a_class != null )
+				throw new FlipperException("OLD SYNTAX class attribute must be specified in <object> not <method> or <behaviour>");
 			String a_name = ee.attr.get("name");
 			String a_mode = ee.attr.get("mode");
 			String a_weight = ee.attr.get("weight");
 			JavaValueList arguments = null;
+			String a_persistent = null;
 			JavaValueList constructors = null;
 			for (SimpleElement lists : ee.children) {
 				if (lists.tag.equals("arguments"))
 					arguments = handle_value_list(template, is, lists);
 				else if (lists.tag.equals("constructors"))
-					constructors = handle_value_list(template, is, lists);
+					throw new FlipperException("OLD SYNTAX <constructors> tag must be inside <object>");
+				else if (lists.tag.equals("object")) {
+					a_class = lists.attr.get("class");
+					a_persistent = lists.attr.get("persistent");
+					for (SimpleElement constr : lists.children) {
+						if ( constr.tag.equals("constructors") ) {
+							constructors = handle_value_list(template, is, constr);
+						} else
+							throw new FlipperException("bad tag inside <object> tag: " + constr.tag);
+					}
+				}
 				else
 					throw new FlipperException("INCOMPLETE: bad tag: " + lists.tag);
 			}
 			Effect newEffect = null;
+			TemplateController tc = (template == null) ? null : template.tf.tc; // INCOMPLETE cause by DB stuff
 			if (ee.tag.equals("function")) {
-				newEffect = new FunctionJavaEffect(a_is, a_is_type, a_class, a_name, arguments);
+				newEffect = new FunctionJavaEffect(tc, a_is, a_is_type, a_class, a_name, arguments);
 			} else if (ee.tag.equals("method")) {
-				newEffect = new MethodJavaEffect(a_is, a_is_type, a_class, constructors, a_name, arguments, a_mode);
+				newEffect = new MethodJavaEffect(tc, a_is, a_is_type, a_class, a_persistent, constructors, a_name, arguments, a_mode);
 			} else if (ee.tag.equals("behaviour")) {
-				newEffect = new BehaviourJavaEffect(a_is, a_is_type, a_class, constructors, a_name, arguments, a_mode);
+				newEffect = new BehaviourJavaEffect(tc, a_is, a_is_type, a_class, a_persistent, constructors, a_name, arguments, a_mode);
 			}
 			if (a_weight != null)
 				newEffect.setWeight((new Double(a_weight)).doubleValue());

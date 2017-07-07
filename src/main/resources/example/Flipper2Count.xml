@@ -44,24 +44,32 @@
 				</arguments>
 		  </function>
           
-		<method is="is.counter.timestwo" class="hmi.flipper2.example.Dynamic" name="fplus">
+		<method is="is.counter.timestwo" name="fplus">
+			<object class="hmi.flipper2.example.Dynamic">
+				<constructors/>
+			</object>
 			<arguments>
 				<value class="Double" is="is.counter.value" />
 				<value class="Double" is="is.counter.value" />
 			</arguments>
 		</method>
 		
-		<method is="is.counter.timestwoplusbase" class="hmi.flipper2.example.Dynamic" name="fplus">
-			<constructors>
-				<value class="Double" constant="1000" />
-			</constructors>
+		<method is="is.counter.timestwoplusbase" name="fplus">
+			<object class="hmi.flipper2.example.Dynamic">
+				<constructors>
+					<value class="Double" constant="1000" />
+				</constructors>
+			</object>
 			<arguments>
 				<value class="Double" is="is.counter.value" />
 				<value class="Double" is="is.counter.value" />
 			</arguments>
 		</method>
           
-        <method is="is.counter.jsonex" is_type="JSONString" class="hmi.flipper2.example.Dynamic" name="fjson">
+        <method is="is.counter.jsonex" is_type="JSONString" name="fjson">
+        	  <object class="hmi.flipper2.example.Dynamic">
+        	  		<constructors/>
+        	  </object>
               <arguments>
                   <value is="is" is_type="JSONString"/>
               </arguments>

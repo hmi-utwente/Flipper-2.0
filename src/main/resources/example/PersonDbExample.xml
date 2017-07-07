@@ -49,16 +49,21 @@
        
           <assign is="is.person.curpid"> is.person.person_ids[ is.person.index ] </assign>
           
-          <method is="is.person.curperson" is_type="JSONString" class="hmi.flipper2.example.PersonDbExample" name="getPerson">
-				<constructors>
-                  <value db="default"/>
-                </constructors>
+          <method is="is.person.curperson" is_type="JSONString" name="getPerson">
+				<object class="hmi.flipper2.example.PersonDbExample">
+					<constructors>
+                  		<value db="default"/>
+                	</constructors>
+                </object>
 				<arguments>
                   <value class="Integer" is="is.person.curpid" />
                 </arguments>
 		  </method>
 		  
-		  <behaviour class="hmi.flipper2.example.PersonDbExample" name="greetingsToMa">
+		  <behaviour name="greetingsToMa">
+		  		<object class="hmi.flipper2.example.PersonDbExample">
+		  			<constructors/>
+		  		</object>
 				<arguments>
                   <value class="Integer" is="is.person.curperson" is_type="JSONString" />
                 </arguments>

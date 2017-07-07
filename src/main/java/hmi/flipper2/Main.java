@@ -23,7 +23,7 @@ public class Main {
 			//});
 				
 			tc.addTemplateFile( tc.resourcePath("example/Flipper2Count.xml") );
-			//tc.addTemplateFile( tc.resourcePath("example/Underscore.xml") );
+			// tc.addTemplateFile( tc.resourcePath("example/Underscore.xml") );
 			// tc.addTemplateFile( tc.resourcePath("example/ChoiceExample.xml") );
 			// tc.addTemplateFile( tc.resourcePath("example/PersonDbExample.xml") );
 			if ( db != null )

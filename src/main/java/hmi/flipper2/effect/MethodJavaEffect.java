@@ -1,13 +1,14 @@
 package hmi.flipper2.effect;
 
 import hmi.flipper2.FlipperException;
+import hmi.flipper2.TemplateController;
 import hmi.flipper2.value.JavaValueList;
 
 public class MethodJavaEffect extends JavaEffect {
 	
-	public MethodJavaEffect(String is_assign, String is_type, String className, JavaValueList constructors, String functionName, JavaValueList arguments, String objectMode)
+	public MethodJavaEffect(TemplateController tc, String is_assign, String is_type, String className, String persistent, JavaValueList constructors, String functionName, JavaValueList arguments, String objectMode)
 			throws FlipperException {
-		super(is_assign, is_type, className, constructors, functionName, arguments, CallMode.CALL_METHOD, decode_mode(objectMode));
+		super(tc, is_assign, is_type, className, persistent, constructors, functionName, arguments, CallMode.CALL_METHOD, decode_mode(objectMode));
 	}
 	
 	public static final ObjectMode decode_mode(String mode) throws FlipperException {

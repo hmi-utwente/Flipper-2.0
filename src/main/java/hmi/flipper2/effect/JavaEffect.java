@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import hmi.flipper2.FlipperException;
 import hmi.flipper2.Is;
 import hmi.flipper2.Is.ValueTransferType;
+import hmi.flipper2.TemplateController;
 import hmi.flipper2.value.JavaValueList;
 
 public class JavaEffect extends Effect {
@@ -27,9 +28,12 @@ public class JavaEffect extends Effect {
 	protected static final Object[] emptyArgs = {};
 	protected static final Class<?> emptyClassArgs[] = {};
 	
+	protected TemplateController tc;
 	protected String	is_assign;
 	protected String 	className;
+	protected String	persisten;
 	protected JavaValueList 	constructors;
+	protected String 	persistent = null;
 	protected String 	callName;
 	protected JavaValueList 	arguments;
 	protected CallMode 	callmode;
@@ -43,13 +47,15 @@ public class JavaEffect extends Effect {
 	protected Object		callObject = null;
 	
 	
-	public JavaEffect(String is_assign, String is_type, String className, JavaValueList constructors, String callName, JavaValueList arguments, CallMode callMode,
+	public JavaEffect(TemplateController tc, String is_assign, String is_type, String className, String persistent, JavaValueList constructors, String callName, JavaValueList arguments, CallMode callMode,
 			ObjectMode objectMode) throws FlipperException {
 		try {
+			this.tc = tc;
 			this.is_assign = is_assign; 		
 			this.vt_type = Is.transferType(is_type);
 			this.className = className;
-			this.constructors = (constructors != null) ? constructors : new JavaValueList();
+			this.persistent = persistent;
+			this.constructors = constructors;
 			this.callName = callName;
 			this.arguments = (arguments != null) ? arguments : new JavaValueList();
 			this.callmode = callMode;
@@ -60,14 +66,13 @@ public class JavaEffect extends Effect {
 			this.callMethod = this.classObject.getMethod(this.callName, this.paramTypes);
 			if (this.callmode == CallMode.CALL_METHOD) {
 				if (this.objectmode == ObjectMode.OBJECT_SINGLE)
-					this.callObject = this.createObject();
+					this.callObject = null;
 			} else {
 				this.callObject = this.classObject;
 			}
 		} catch (NoSuchMethodException e) {
 			throw new FlipperException(e, "!Cannot find "+ cm2string(this.callmode) + " " + this.className + " " + this.callName + this.arguments.toString());
-		} catch (ClassNotFoundException | IllegalArgumentException | InvocationTargetException | InstantiationException
-				| IllegalAccessException | SecurityException e) {
+		} catch (ClassNotFoundException | IllegalArgumentException | SecurityException e) {
 			throw new FlipperException(e);
 		}
 	}
@@ -76,15 +81,27 @@ public class JavaEffect extends Effect {
 		return this.is_assign != null;
 	}
 	
+	private Object checkPersistent(Object o) {
+		// System.out.println("Creating Object of class: "+o.getClass().getName());
+		if ( persistent != null )
+			throw new RuntimeException("INCOMPLETE: SHOULD STORE PERSISTENT VALUE");
+		return o;
+	}
+	
 	protected Object createObject() throws FlipperException, InstantiationException, IllegalAccessException,
 			SecurityException, IllegalArgumentException, InvocationTargetException {
-		if (this.constructors.size() == 0) {
-			return this.classObject.newInstance();
+		if ( this.constructors == null ) {
+			if ( this.persistent == null )
+				throw new FlipperException("!No constructor or persistent spec for: " + " " + this.callName + this.arguments.toString());
+			else
+				throw new RuntimeException("INCOMPLETE: SHOULD RETRIEVE PERSISTENT VALUE");
+		} else if (this.constructors.size() == 0) {
+			return checkPersistent( this.classObject.newInstance() );
 		} else {
 			try {
 				Class<?> ctypes[] = this.constructors.classArray();
 				Constructor<?> dynConstructor = this.classObject.getConstructor(ctypes);
-				return dynConstructor.newInstance(this.constructors.objectArray());
+				return checkPersistent( dynConstructor.newInstance(this.constructors.objectArray()) );
 			} catch (NoSuchMethodException e) {
 				throw new FlipperException(e, "!Cannot find constructor " +className + this.constructors.toString() + " for method " + this.callName);
 			}
@@ -119,7 +136,7 @@ public class JavaEffect extends Effect {
 	
 	protected Object executeCall(Object[] method_args) throws FlipperException {
 		try {
-			if (this.objectmode == ObjectMode.OBJECT_MULTI)
+			if (this.objectmode == ObjectMode.OBJECT_MULTI || this.callObject == null)
 				this.callObject = this.createObject();
 			return this.callMethod.invoke(this.callObject, method_args);
 		} catch (IllegalAccessException | SecurityException | IllegalArgumentException

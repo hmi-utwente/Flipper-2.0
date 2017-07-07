@@ -3,6 +3,7 @@ package hmi.flipper2;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import hmi.flipper2.effect.EffectList;
 import hmi.flipper2.effect.JavaEffect;
@@ -127,12 +128,14 @@ public class TemplateFile {
 	 * 
 	 */
 	
-	public boolean check(Is is) throws FlipperException {	
+	public boolean check(Is is, Pattern templatePattern) throws FlipperException {	
 		boolean res = false;
 
 		for (Template template : this.templates ) {
-			tc.registerCurrentTemplate(this.name, template.id, template.name);
-			res =  template.check(is) || res;
+			if ( (templatePattern == null ) || (templatePattern != null && templatePattern.matcher(template.id).matches())) {
+				tc.registerCurrentTemplate(this.name, template.id, template.name);
+				res =  template.check(is) || res;
+			}
 		}
 		return res;
 	}

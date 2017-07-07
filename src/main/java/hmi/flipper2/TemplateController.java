@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import hmi.flipper2.postgres.Database;
@@ -220,12 +221,16 @@ public class TemplateController {
 	 * @exception FlipperException
 	 *                On all errors.
 	 */
-	public boolean checkTemplates() throws FlipperException {
+	public boolean checkTemplates(String templateFilter) throws FlipperException {
 		try {
 			boolean changed = false;
 
+			Pattern templatePattern = null;
+			
+			if ( templateFilter != null )
+				templatePattern = Pattern.compile(templateFilter);
 			for (TemplateFile tf : this.tf_list) {
-				changed = tf.check(this.is) || changed;
+				changed = tf.check(this.is, templatePattern) || changed;
 			}
 			if (changed) {
 				is.commit(); // commit the information state
@@ -237,6 +242,10 @@ public class TemplateController {
 			e.registerCurrentTemplate(this.current_tf, this.current_id, this.current_name);
 			throw e;
 		}
+	}
+	
+	public boolean checkTemplates() throws FlipperException {
+		return checkTemplates(null);
 	}
 	
 	private String current_tf = null;
