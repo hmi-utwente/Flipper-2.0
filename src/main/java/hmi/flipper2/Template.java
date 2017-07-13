@@ -18,6 +18,7 @@ import hmi.flipper2.value.ConstantJavaValue;
 import hmi.flipper2.value.DbJavaValue;
 import hmi.flipper2.value.IsJavaValue;
 import hmi.flipper2.value.JavaValueList;
+import hmi.flipper2.value.PersistentJavaValue;
 
 public class Template {
 
@@ -150,6 +151,8 @@ public class Template {
 				jvl.add( new IsJavaValue(is, val.attr.get("is"), val.attr.get("is_type"),val.attr.get("class")));
 			} else if (  val.attr.get("db") != null ) {
 				jvl.add( new DbJavaValue(is, val.attr.get("db")));
+			} else if (  val.attr.get("persistent") != null ) {
+				jvl.add( new PersistentJavaValue(template, val.attr.get("class"), val.attr.get("persistent")));
 			} else 
 				throw new FlipperException("INCOMPLETE: bad value tag: "+val.tag);
 		}

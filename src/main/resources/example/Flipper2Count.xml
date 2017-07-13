@@ -54,12 +54,12 @@
 			</arguments>
 		</method>
 		
-		<method is="is.counter.timestwo" name="fplus">
+		<method is="is.counter.timestwo" name="recur">
 			<object class="hmi.flipper2.example.Dynamic" persistent="is.counter.persistent-dynamic">
 			</object>
 			<arguments>
 				<value class="Double" is="is.counter.value" />
-				<value class="Double" is="is.counter.value" />
+				<value class="hmi.flipper2.example.Dynamic" persistent="is.counter.persistent-dynamic" />
 			</arguments>
 		</method>
 		

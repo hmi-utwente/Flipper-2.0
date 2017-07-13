@@ -45,6 +45,12 @@ public class Dynamic {
 			System.out.println("Dynamic:static method:f(Double(" + dl + "," + dr + ")) called.");
 		return base + dl + dr;
 	}
+	
+	public Double recur(Double dl, Dynamic dyn) {
+		if (verbose)
+			System.out.println("Dynamic: method:recur(" + dl + ", obj.base=" + dyn.base  + ")) called.");
+		return base + dl;
+	}
 
 	public String fjson(String json) {
 		if (verbose)
