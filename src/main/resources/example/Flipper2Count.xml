@@ -45,8 +45,17 @@
 		  </function>
           
 		<method is="is.counter.timestwo" name="fplus">
-			<object class="hmi.flipper2.example.Dynamic">
+			<object class="hmi.flipper2.example.Dynamic" persistent="is.counter.persistent-dynamic">
 				<constructors/>
+			</object>
+			<arguments>
+				<value class="Double" is="is.counter.value" />
+				<value class="Double" is="is.counter.value" />
+			</arguments>
+		</method>
+		
+		<method is="is.counter.timestwo" name="fplus">
+			<object class="hmi.flipper2.example.Dynamic" persistent="is.counter.persistent-dynamic">
 			</object>
 			<arguments>
 				<value class="Double" is="is.counter.value" />

@@ -2,6 +2,7 @@ package hmi.flipper2;
 
 import java.sql.Connection;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 
 import hmi.flipper2.javascript.JsEngine;
@@ -34,6 +35,7 @@ public class Is extends JsEngine {
 	private void is_init() throws FlipperException {
 		this.is_tf_table = new HashMap<String, TemplateFile>();
 		execute("var is = { tag : \"Information State\" }");
+		initPersistentObjects();
 	}
 	
 	public void commit() throws FlipperException {
@@ -112,4 +114,24 @@ public class Is extends JsEngine {
 			throw new FlipperException("ValueTransferType: unknown is_type: "+ s);
 	}
 	
+	/*
+	 * The Persistent Objects are part of Is at the moment because this is the most logical at the moment!
+	 * INCOMPLETE: transaction management
+	 */
+	
+	private Hashtable<String, Object> persistentObjects;
+	
+	private void initPersistentObjects() {
+		this.persistentObjects = new Hashtable<String, Object>();
+	}
+	
+	public void putPersistent(Template template, String s, Object o) {
+		this.persistentObjects.put(s, o);
+	}
+	
+	public Object getPersistent(String s) {
+		return this.persistentObjects.get(s);
+	}
+	
 }
+

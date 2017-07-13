@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import hmi.flipper2.FlipperException;
 import hmi.flipper2.Is;
 import hmi.flipper2.Is.ValueTransferType;
+import hmi.flipper2.Template;
 import hmi.flipper2.TemplateController;
 import hmi.flipper2.value.JavaValueList;
 
@@ -28,7 +29,7 @@ public class JavaEffect extends Effect {
 	protected static final Object[] emptyArgs = {};
 	protected static final Class<?> emptyClassArgs[] = {};
 	
-	protected TemplateController tc;
+	protected Template	template;
 	protected String	is_assign;
 	protected String 	className;
 	protected String	persisten;
@@ -47,10 +48,10 @@ public class JavaEffect extends Effect {
 	protected Object		callObject = null;
 	
 	
-	public JavaEffect(TemplateController tc, String is_assign, String is_type, String className, String persistent, JavaValueList constructors, String callName, JavaValueList arguments, CallMode callMode,
+	public JavaEffect(Template template, String is_assign, String is_type, String className, String persistent, JavaValueList constructors, String callName, JavaValueList arguments, CallMode callMode,
 			ObjectMode objectMode) throws FlipperException {
 		try {
-			this.tc = tc;
+			this.template = template;
 			this.is_assign = is_assign; 		
 			this.vt_type = Is.transferType(is_type);
 			this.className = className;
@@ -82,9 +83,9 @@ public class JavaEffect extends Effect {
 	}
 	
 	private Object checkPersistent(Object o) {
-		// System.out.println("Creating Object of class: "+o.getClass().getName());
-		if ( persistent != null )
-			throw new RuntimeException("INCOMPLETE: SHOULD STORE PERSISTENT VALUE");
+		if ( this.persistent != null ) {
+			this.template.tf.tc.is.putPersistent(template, this.persistent, o);
+		}
 		return o;
 	}
 	
@@ -93,8 +94,12 @@ public class JavaEffect extends Effect {
 		if ( this.constructors == null ) {
 			if ( this.persistent == null )
 				throw new FlipperException("!No constructor or persistent spec for: " + " " + this.callName + this.arguments.toString());
-			else
-				throw new RuntimeException("INCOMPLETE: SHOULD RETRIEVE PERSISTENT VALUE");
+			else {
+				Object res = this.template.tf.tc.is.getPersistent(this.persistent);
+				if ( res == null )
+					throw new FlipperException("Unknown persistent object: "+this.persistent+" in "+this);
+				return res;
+			}
 		} else if (this.constructors.size() == 0) {
 			return checkPersistent( this.classObject.newInstance() );
 		} else {

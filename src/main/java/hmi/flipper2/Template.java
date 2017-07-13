@@ -110,13 +110,12 @@ public class Template {
 					throw new FlipperException("INCOMPLETE: bad tag: " + lists.tag);
 			}
 			Effect newEffect = null;
-			TemplateController tc = (template == null) ? null : template.tf.tc; // INCOMPLETE cause by DB stuff
 			if (ee.tag.equals("function")) {
-				newEffect = new FunctionJavaEffect(tc, a_is, a_is_type, a_class, a_name, arguments);
+				newEffect = new FunctionJavaEffect(template, a_is, a_is_type, a_class, a_name, arguments);
 			} else if (ee.tag.equals("method")) {
-				newEffect = new MethodJavaEffect(tc, a_is, a_is_type, a_class, a_persistent, constructors, a_name, arguments, a_mode);
+				newEffect = new MethodJavaEffect(template, a_is, a_is_type, a_class, a_persistent, constructors, a_name, arguments, a_mode);
 			} else if (ee.tag.equals("behaviour")) {
-				newEffect = new BehaviourJavaEffect(tc, a_is, a_is_type, a_class, a_persistent, constructors, a_name, arguments, a_mode);
+				newEffect = new BehaviourJavaEffect(template, a_is, a_is_type, a_class, a_persistent, constructors, a_name, arguments, a_mode);
 			}
 			if (a_weight != null)
 				newEffect.setWeight((new Double(a_weight)).doubleValue());
