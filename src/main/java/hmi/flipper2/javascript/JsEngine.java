@@ -53,9 +53,11 @@ public class JsEngine {
 			throw new FlipperException("Condition not Boolean: " + js_expr);
 	}
 	
+	public static int JSON_PP_SPACING = 2;
+	
 	public String getJSONfromJs(String js_expr) throws FlipperException {
 		try {
-			return (String)engine.eval("JSON.stringify("+js_expr+")");
+			return (String)engine.eval("JSON.stringify("+js_expr+", null, "+JSON_PP_SPACING +")");
 		} catch (ScriptException e) {
 			throw new FlipperException(e, "JSON.stringify("+js_expr+")");
 		}
