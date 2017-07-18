@@ -12,7 +12,7 @@
 			}
 	</javascript>
 	
-    <template id="1" name="Template A">
+    <template id="1" name="Template A" conditional="false">
     
       <preconditions mode="and">
       

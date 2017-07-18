@@ -87,7 +87,8 @@ public class TemplateFile {
 	List<Template> templates = new ArrayList<Template>();
 	
 	private void handle_template(SimpleElement el) throws FlipperException {
-		templates.add( new Template(this, el)	);
+		Template new_t = new Template(this, el);
+		templates.add( new_t );
 	}
 	
 	/*
@@ -121,23 +122,6 @@ public class TemplateFile {
 			if (this.db_cleanup_java != null)
 				this.db_cleanup_java.doIt(tc.is);
 		}
-	}
-	
-	/*
-	 * 
-	 * 
-	 */
-	
-	public boolean check(Is is, Pattern templatePattern) throws FlipperException {	
-		boolean res = false;
-
-		for (Template template : this.templates ) {
-			if ( (templatePattern == null ) || (templatePattern != null && templatePattern.matcher(template.id).matches())) {
-				tc.registerCurrentTemplate(this.name, template.id, template.name);
-				res =  template.check(is) || res;
-			}
-		}
-		return res;
 	}
 	
 	/*

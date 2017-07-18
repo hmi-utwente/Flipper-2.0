@@ -26,11 +26,15 @@ public class Template {
 	
 	public String id;
 	public String name;
+	public boolean conditional = false;
 
 	public Template(TemplateFile tf, SimpleElement el) throws FlipperException {
 		this.tf = tf;
 		this.id = el.attr.get("id");
 		this.name = el.attr.get("name");
+		String conditionalString = el.attr.get("conditional");
+		if ( conditionalString != null && conditionalString.toLowerCase().equals("true"))
+			this.conditional = true;
 		tf.tc.registerCurrentTemplate(tf.name, this.id, this.name);
 		for (SimpleElement coe : el.children) {
 			if (coe.tag.equals("preconditions")) {

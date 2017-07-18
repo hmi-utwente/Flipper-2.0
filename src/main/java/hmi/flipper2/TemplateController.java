@@ -99,6 +99,7 @@ public class TemplateController {
 	private Database db;
 	public int	cid; // controller id in Database
 	private List<TemplateFile> tf_list;
+	List<Template> base_templates;
 	public  Is is;
 	
 	/**
@@ -116,14 +117,17 @@ public class TemplateController {
 	 */
 	public TemplateController(String name, Database db) throws FlipperException {
 		this.name = name;
+		this.base_templates = new ArrayList<Template>();
 		this.db = db;
 		this.is = new Is(this.db);
 		if ( this.db != null ) {
 			this.cid = db.getControllerID(name);
 			this.tf_list = db.getTemplateFiles(this);
+			rebuildCheckTemplates();
 		} else {
 			this.cid = -1;
 			this.tf_list = new ArrayList<TemplateFile>();
+			this.base_templates = new ArrayList<Template>();
 		}
 	}
 	
@@ -175,6 +179,7 @@ public class TemplateController {
 				if (this.db != null)
 					db.addTemplateFile(this, tf);
 				this.tf_list.add(tf);
+				addCheckTemplates(tf.templates);
 			} catch (IOException e) {
 				throw new FlipperException(e);
 			}
@@ -182,6 +187,21 @@ public class TemplateController {
 			e.registerCurrentTemplate(this.current_tf, this.current_id, this.current_name);
 			throw e;
 		}
+	}
+	
+	private void addCheckTemplates(List<Template> templates) throws FlipperException {
+		for (Template t : templates ) {
+			if ( t.conditional )
+				throw new RuntimeException("conditional templates not yet implemented");
+			else
+				this.base_templates.add(t);
+		}
+	}
+	
+	private void rebuildCheckTemplates() throws FlipperException {
+		this.base_templates = new ArrayList<Template>();
+		for(TemplateFile tf: this.tf_list) 
+			addCheckTemplates( tf.templates );
 	}
 	
 	/**
@@ -200,6 +220,7 @@ public class TemplateController {
 		if (this.db != null)
 			db.removeTemplateFile(this, tf_remove);
 		this.tf_list.remove( tf_remove );
+		rebuildCheckTemplates();
 	}
 	
 	private TemplateFile findTemplateFile(String path) throws FlipperException {
@@ -229,9 +250,14 @@ public class TemplateController {
 			
 			if ( templateFilter != null )
 				templatePattern = Pattern.compile(templateFilter);
-			for (TemplateFile tf : this.tf_list) {
-				changed = tf.check(this.is, templatePattern) || changed;
+			//
+			for (Template template : this.base_templates ) {
+				if ( (templatePattern == null ) || (templatePattern != null && templatePattern.matcher(template.id).matches())) {
+					this.registerCurrentTemplate(this.name, template.id, template.name);
+					changed =  template.check(is) || changed;
+				}
 			}
+			//
 			if (changed) {
 				is.commit(); // commit the information state
 				if (this.db != null)
@@ -247,6 +273,10 @@ public class TemplateController {
 	public boolean checkTemplates() throws FlipperException {
 		return checkTemplates(null);
 	}
+	
+	/**
+	 * 
+	 */
 	
 	private String current_tf = null;
 	private String current_id = null;
