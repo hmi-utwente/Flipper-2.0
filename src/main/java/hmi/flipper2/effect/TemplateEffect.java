@@ -1,0 +1,32 @@
+package hmi.flipper2.effect;
+
+import hmi.flipper2.FlipperException;
+import hmi.flipper2.Is;
+
+public class TemplateEffect extends Effect {
+
+	private String regexpr;
+	private String isregexpr;
+	public TemplateEffect(String regexpr, String isregexpr) throws FlipperException {	
+		if ( regexpr != null && isregexpr != null )
+			throw new FlipperException("TemplateEffect cannot have both regexpr and isregexpr");
+		this.regexpr	= regexpr;
+		this.isregexpr	= isregexpr;
+		// System.out.println("regexpr="+this.regexpr);
+		// System.out.println("isregexpr="+this.isregexpr);
+	}
+	
+	@Override
+	public Object doIt(Is is) throws FlipperException {
+		if ( this.isregexpr != null ) {
+			this.regexpr = is.getIs(this.isregexpr);
+			if ( this.regexpr == null )
+				throw new FlipperException("checktemplates: isregexpr not found: "+this.isregexpr);
+			else 
+				this.regexpr = this.regexpr.substring(1, this.regexpr.length()-1); // strip quotes
+		}
+		is.tc.checkConditionalTemplates(this.regexpr);
+		return null;
+	}
+
+}

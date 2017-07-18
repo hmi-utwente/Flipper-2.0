@@ -13,6 +13,7 @@ import hmi.flipper2.effect.EffectList;
 import hmi.flipper2.effect.FunctionJavaEffect;
 import hmi.flipper2.effect.JavaEffect;
 import hmi.flipper2.effect.MethodJavaEffect;
+import hmi.flipper2.effect.TemplateEffect;
 import hmi.flipper2.sax.SimpleElement;
 import hmi.flipper2.value.ConstantJavaValue;
 import hmi.flipper2.value.DbJavaValue;
@@ -26,7 +27,6 @@ public class Template {
 	
 	public String id;
 	public String name;
-	public boolean conditional = false;
 
 	public Template(TemplateFile tf, SimpleElement el) throws FlipperException {
 		this.tf = tf;
@@ -47,6 +47,28 @@ public class Template {
 				throw new RuntimeException("INCOMPLETE: bad template: "+coe.tag);
 		}
 	}
+	
+	/**
+	 * 
+	 */
+	
+	public boolean conditional	= false;
+	public Template next_conditional	= null; // used for building a stack of conditional Templates
+	
+	public Template push(Template oldtop) {
+		this.next_conditional = oldtop;
+		return this; // the new top
+	}
+	
+	public Template pop() {
+		Template res = this.next_conditional;
+		this.next_conditional = null;	
+		return res;
+	}
+	
+	/**
+	 * 
+	 */
 
 	ConditionList preconditions = null;
 	
@@ -83,6 +105,8 @@ public class Template {
 			return new AssignEffect(ee.attr.get("is"), ee.characters.toString());
 		} else if (ee.tag.equals("db")) {
 			throw new RuntimeException("INCOMPLETE: DB ELEMENT: " + ee);
+		} else if (ee.tag.equals("checktemplates")) {
+			return new TemplateEffect(ee.attr.get("regexpr"),ee.attr.get("isregexpr"));
 		} else if (ee.tag.equals("function") || ee.tag.equals("method") || ee.tag.equals("behaviour")) {
 			boolean isFunction = ee.tag.equals("function");
 			String a_is = ee.attr.get("is");
@@ -164,6 +188,7 @@ public class Template {
 	}
 	
 	public boolean check(Is is) throws FlipperException {
+		// System.out.println("!!! Checking template: "+this.id);
 		if ( preconditions.checkIt(is) ) {
 			for(EffectList effects: listOfEffectList)
 				effects.doIt(is);

@@ -10,10 +10,12 @@ import hmi.flipper2.postgres.Database;
 
 public class Is extends JsEngine {
 	
+	public	TemplateController tc;
 	private Database db;
 	private Map<String, TemplateFile> is_tf_table;
 	
-	Is(Database db) throws FlipperException {
+	Is(TemplateController tc, Database db) throws FlipperException {
+		this.tc = tc;
 		this.db = db;
 		is_init();
 	}

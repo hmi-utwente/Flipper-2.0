@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -99,7 +100,8 @@ public class TemplateController {
 	private Database db;
 	public int	cid; // controller id in Database
 	private List<TemplateFile> tf_list;
-	List<Template> base_templates;
+	List<Template> base_templates, cond_templates;
+	Template conditional_stack = null;
 	public  Is is;
 	
 	/**
@@ -117,18 +119,16 @@ public class TemplateController {
 	 */
 	public TemplateController(String name, Database db) throws FlipperException {
 		this.name = name;
-		this.base_templates = new ArrayList<Template>();
 		this.db = db;
-		this.is = new Is(this.db);
+		this.is = new Is(this, this.db);
 		if ( this.db != null ) {
 			this.cid = db.getControllerID(name);
 			this.tf_list = db.getTemplateFiles(this);
-			rebuildCheckTemplates();
 		} else {
 			this.cid = -1;
 			this.tf_list = new ArrayList<TemplateFile>();
-			this.base_templates = new ArrayList<Template>();
 		}
+		rebuildCheckTemplates();
 	}
 	
 	/**
@@ -192,14 +192,22 @@ public class TemplateController {
 	private void addCheckTemplates(List<Template> templates) throws FlipperException {
 		for (Template t : templates ) {
 			if ( t.conditional )
-				throw new RuntimeException("conditional templates not yet implemented");
+				this.cond_templates.add(t);
 			else
 				this.base_templates.add(t);
 		}
 	}
 	
+	public void checkConditionalTemplates(String regexpr) throws FlipperException {
+		for (Template t : filterTemplates(this.cond_templates, regexpr) ) {
+			this.conditional_stack = t.push(this.conditional_stack);
+			
+		}
+	}
+	
 	private void rebuildCheckTemplates() throws FlipperException {
 		this.base_templates = new ArrayList<Template>();
+		this.cond_templates = new ArrayList<Template>();
 		for(TemplateFile tf: this.tf_list) 
 			addCheckTemplates( tf.templates );
 	}
@@ -245,17 +253,15 @@ public class TemplateController {
 	public boolean checkTemplates(String templateFilter) throws FlipperException {
 		try {
 			boolean changed = false;
-
-			Pattern templatePattern = null;
-			
-			if ( templateFilter != null )
-				templatePattern = Pattern.compile(templateFilter);
+			this.conditional_stack = null;
 			//
-			for (Template template : this.base_templates ) {
-				if ( (templatePattern == null ) || (templatePattern != null && templatePattern.matcher(template.id).matches())) {
-					this.registerCurrentTemplate(this.name, template.id, template.name);
-					changed =  template.check(is) || changed;
-				}
+			for (Template template : filterTemplates(this.base_templates, templateFilter) ) {
+					changed =  checkTemplate(template) || changed;
+					while ( this.conditional_stack != null ) {
+						Template toCheck = this.conditional_stack;
+						this.conditional_stack = this.conditional_stack.pop();
+						checkTemplate(toCheck);
+					}
 			}
 			//
 			if (changed) {
@@ -270,8 +276,26 @@ public class TemplateController {
 		}
 	}
 	
+	private List<Template> filterTemplates(List<Template> list, String regexpr) {
+		if ( regexpr == null )
+			return list;
+		else {
+			ArrayList<Template> res = new ArrayList<Template>();
+			Pattern templatePattern = Pattern.compile(regexpr);
+			for (Template t : list )
+				if ( templatePattern.matcher(t.id).matches() ) 
+					res.add(t);
+			return res;
+		}
+	}
+	
 	public boolean checkTemplates() throws FlipperException {
 		return checkTemplates(null);
+	}
+	
+	private boolean checkTemplate(Template t) throws FlipperException {
+		this.registerCurrentTemplate(this.name, t.id, t.name);
+		return t.check(is);
 	}
 	
 	/**
