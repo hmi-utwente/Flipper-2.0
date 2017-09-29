@@ -84,6 +84,8 @@ public class Template {
 			} else
 				throw new RuntimeException("INCOMPLETE: bad precondition: "+pc.tag);	
 		}
+		if ( preconditions.size() == 0 )
+			throw new FlipperException("preconditions list cannot be empty");
 	}
 
 	List<EffectList> listOfEffectList = new ArrayList<EffectList>();

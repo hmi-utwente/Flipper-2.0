@@ -6,7 +6,7 @@
 		"cascade" : "CX.*"
 		}
 	</is>
-
+	
 	<template id="MAIN" name="Base Template">
 		<preconditions>
 			<condition> is.ct.value &lt; 10</condition>
