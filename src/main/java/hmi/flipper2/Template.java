@@ -39,8 +39,10 @@ public class Template {
 		for (SimpleElement coe : el.children) {
 			if (coe.tag.equals("preconditions")) {
 				handle_preconditions(coe);
+			} else if (coe.tag.equals("initializationeffects")) {
+				listOfInitializeEffectList.add(handle_effects(coe));
 			} else if (coe.tag.equals("effects")) {
-				handle_effects(coe);
+				listOfEffectList.add(handle_effects(coe));
 			} else if (coe.tag.equals("javascript")) {
 				this.tf.tc.is.execute(coe.characters.toString());
 			} else
@@ -88,18 +90,19 @@ public class Template {
 			throw new FlipperException("preconditions list cannot be empty");
 	}
 
+	List<EffectList> listOfInitializeEffectList = new ArrayList<EffectList>();
 	List<EffectList> listOfEffectList = new ArrayList<EffectList>();
 	
-	private void handle_effects(SimpleElement el) throws FlipperException {
+	private EffectList handle_effects(SimpleElement el) throws FlipperException {
 		String a_effect_mode = el.attr.get("mode");
 		EffectList effects = new EffectList(( a_effect_mode != null && a_effect_mode.equals("weighted")) );
-		listOfEffectList.add(effects);
 		for (SimpleElement ee : el.children) {
 			if ( ee.tag.equals("javascript"))
 				this.tf.tc.is.execute(ee.characters.toString());
 			else 
 				effects.add(handle_effect(this, tf.tc.is, ee));
 		}
+		return effects;
 	}
 	
 	public static Effect handle_effect(Template template, Is is, SimpleElement ee) throws FlipperException {
@@ -198,4 +201,10 @@ public class Template {
 		}
 		return false;
 	}
+	
+	public void doInitializeEffects() throws FlipperException {
+		for(EffectList effects: listOfInitializeEffectList)
+			effects.doIt(this.tf.tc.is);		
+	}
+	
 }

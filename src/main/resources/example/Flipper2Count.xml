@@ -14,6 +14,10 @@
 	
     <template id="1" name="Template A" conditional="false">
     
+<!--       <initializationeffects> -->
+<!-- 			<assign is="is.counter.autoinit"> "AUTOINIT" </assign> -->
+<!-- 	  </initializationeffects> -->
+		
       <preconditions mode="and">
       
       	  	<javascript><![CDATA[

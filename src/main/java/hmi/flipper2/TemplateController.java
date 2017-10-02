@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import hmi.flipper2.effect.EffectList;
 import hmi.flipper2.postgres.Database;
 import hmi.flipper2.sax.SimpleSAXParser;
 
@@ -173,13 +174,18 @@ public class TemplateController {
 	public void addTemplateFile(String path) throws FlipperException {
 		try {
 			try {
-
 				String xml_str = SimpleSAXParser.readFile(path);
 				TemplateFile tf = new TemplateFile(this, path, xml_str, null, 0);
 				if (this.db != null)
 					db.addTemplateFile(this, tf);
 				this.tf_list.add(tf);
 				addCheckTemplates(tf.templates);
+				// now execute the template initialization code
+				for(Template t: tf.templates) {
+					if ( t.listOfInitializeEffectList.size() > 0 ) {
+						t.doInitializeEffects();
+					}
+				}
 			} catch (IOException e) {
 				throw new FlipperException(e);
 			}
@@ -200,8 +206,7 @@ public class TemplateController {
 	
 	public void checkConditionalTemplates(String regexpr) throws FlipperException {
 		for (Template t : filterTemplates(this.cond_templates, regexpr) ) {
-			this.conditional_stack = t.push(this.conditional_stack);
-			
+			this.conditional_stack = t.push(this.conditional_stack);			
 		}
 	}
 	
