@@ -14,9 +14,9 @@
 	
     <template id="1" name="Template A" conditional="false">
     
-<!--       <initializationeffects> -->
-<!-- 			<assign is="is.counter.autoinit"> "AUTOINIT" </assign> -->
-<!-- 	  </initializationeffects> -->
+       <initeffects>
+ 			<assign is="is.counter.autoinit"> "AUTOINIT" </assign>
+ 	  </initeffects>
 		
       <preconditions mode="and">
       

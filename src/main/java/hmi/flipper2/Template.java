@@ -39,7 +39,7 @@ public class Template {
 		for (SimpleElement coe : el.children) {
 			if (coe.tag.equals("preconditions")) {
 				handle_preconditions(coe);
-			} else if (coe.tag.equals("initializationeffects")) {
+			} else if (coe.tag.equals("initeffects")) {
 				listOfInitializeEffectList.add(handle_effects(coe));
 			} else if (coe.tag.equals("effects")) {
 				listOfEffectList.add(handle_effects(coe));
