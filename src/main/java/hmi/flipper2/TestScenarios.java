@@ -11,9 +11,9 @@ public class TestScenarios {
 	public static void openCheckXCloseDestroy() {
 		try {
 			String scenario = "TestMultiDB";
-			
-			Database db = Database.openDatabaseFromConfig();
-			db.clearAll();; // do a complete new start
+			Database db = null;
+			//Database db = Database.openDatabaseFromConfig();
+			//db.clearAll();; // do a complete new start
 			TemplateController tc = TemplateController.create(scenario, "An iterative open/close setup", db);	
 			tc.addTemplateFile( tc.resourcePath("example/Flipper2Count.xml") );
 			tc.close();
