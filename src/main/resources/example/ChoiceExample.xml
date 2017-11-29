@@ -16,17 +16,20 @@
 		</effects>
 
 		<effects mode="weighted">
-			<method class="hmi.flipper2.example.Dynamic" name="f" weight="1">
+			<method name="f" weight="1">
+			    <object class="hmi.flipper2.example.Dynamic"> <constructors/> </object> 
 				<arguments>
 					<value class="String" constant="Choice A" />
 				</arguments>
 			</method>
-			<method class="hmi.flipper2.example.Dynamic" name="f" weight="1">
+			<method name="f" weight="1">
+			    <object class="hmi.flipper2.example.Dynamic"> <constructors/> </object> 
 				<arguments>
 					<value class="String" constant="Choice B" />
 				</arguments>
 			</method>
-			<method class="hmi.flipper2.example.Dynamic" name="f" weight="1">
+			<method name="f" weight="1">
+			    <object class="hmi.flipper2.example.Dynamic"> <constructors/> </object> 
 				<arguments>
 					<value class="String" constant="Choice C" />
 				</arguments>

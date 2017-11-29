@@ -106,12 +106,17 @@ public class Template {
 	}
 	
 	public static Effect handle_effect(Template template, Is is, SimpleElement ee) throws FlipperException {
+		Effect result = null;
+		
+		String effect_weight = ee.attr.get("weight");
 	    if (ee.tag.equals("assign")) {
-			return new AssignEffect(ee.attr.get("is"), ee.characters.toString());
+			result = new AssignEffect(ee.attr.get("is"), ee.characters.toString());
+			return result;
 		} else if (ee.tag.equals("db")) {
 			throw new RuntimeException("INCOMPLETE: DB ELEMENT: " + ee);
 		} else if (ee.tag.equals("checktemplates")) {
-			return new TemplateEffect(ee.attr.get("regexpr"),ee.attr.get("isregexpr"));
+			result = new TemplateEffect(ee.attr.get("regexpr"),ee.attr.get("isregexpr"));
+			return result;
 		} else if (ee.tag.equals("function") || ee.tag.equals("method") || ee.tag.equals("behaviour")) {
 			boolean isFunction = ee.tag.equals("function");
 			String a_is = ee.attr.get("is");
@@ -121,7 +126,6 @@ public class Template {
 				throw new FlipperException("OLD SYNTAX class attribute must be specified in <object> not <method> or <behaviour>");
 			String a_name = ee.attr.get("name");
 			String a_mode = ee.attr.get("mode");
-			String a_weight = ee.attr.get("weight");
 			JavaValueList arguments = null;
 			String a_persistent = null;
 			JavaValueList constructors = null;
@@ -151,11 +155,12 @@ public class Template {
 			} else if (ee.tag.equals("behaviour")) {
 				newEffect = new BehaviourJavaEffect(template, a_is, a_is_type, a_class, a_persistent, constructors, a_name, arguments, a_mode);
 			}
-			if (a_weight != null)
-				newEffect.setWeight((new Double(a_weight)).doubleValue());
-			return newEffect;
+			result = newEffect;
 		} else
 			throw new FlipperException("UNKNOWN effect: " + ee.tag);
+	    if (effect_weight != null)
+			result.setWeight((new Double(effect_weight)).doubleValue());
+	    return result;
 	}
 	
 	private static JavaValueList handle_value_list(Template template, Is is, SimpleElement list) throws FlipperException {

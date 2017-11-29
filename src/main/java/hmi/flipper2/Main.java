@@ -22,10 +22,10 @@ public class Main {
 			//	"jslibs/underscore-min.js"
 			//});
 				
-			tc.addTemplateFile( tc.resourcePath("example/Flipper2Count.xml") );
+			// tc.addTemplateFile( tc.resourcePath("example/Flipper2Count.xml") );
 			// tc.addTemplateFile( tc.resourcePath("example/ConditionalTemplates.xml") );
 			// tc.addTemplateFile( tc.resourcePath("example/Underscore.xml") );
-			// tc.addTemplateFile( tc.resourcePath("example/ChoiceExample.xml") );
+			tc.addTemplateFile( tc.resourcePath("example/ChoiceExample.xml") );
 			// tc.addTemplateFile( tc.resourcePath("example/PersonDbExample.xml") );
 			if ( db != null )
 				db.commit(); // addTemplatefile does not automatically commit()
