@@ -111,12 +111,10 @@ public class Template {
 		String effect_weight = ee.attr.get("weight");
 	    if (ee.tag.equals("assign")) {
 			result = new AssignEffect(ee.attr.get("is"), ee.characters.toString());
-			return result;
 		} else if (ee.tag.equals("db")) {
 			throw new RuntimeException("INCOMPLETE: DB ELEMENT: " + ee);
 		} else if (ee.tag.equals("checktemplates")) {
 			result = new TemplateEffect(ee.attr.get("regexpr"),ee.attr.get("isregexpr"));
-			return result;
 		} else if (ee.tag.equals("function") || ee.tag.equals("method") || ee.tag.equals("behaviour")) {
 			boolean isFunction = ee.tag.equals("function");
 			String a_is = ee.attr.get("is");
