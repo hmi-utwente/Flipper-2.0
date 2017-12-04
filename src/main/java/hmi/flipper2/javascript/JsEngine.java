@@ -53,6 +53,17 @@ public class JsEngine {
 			throw new FlipperException("Condition not Boolean: " + js_expr);
 	}
 	
+	public double numericExpression(String js_expr) throws FlipperException {
+		Object retval = eval(js_expr);
+		if (retval != null) {
+			try {
+				return ((Number) retval).doubleValue();
+			} catch (ClassCastException e) {
+			}				
+		}
+		throw new FlipperException("Expression does not return Number: " + js_expr);
+	}
+	
 	public static int JSON_PP_SPACING = 2;
 	
 	public String getJSONfromJs(String js_expr) throws FlipperException {

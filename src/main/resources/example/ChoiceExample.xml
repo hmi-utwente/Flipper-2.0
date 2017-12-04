@@ -15,14 +15,14 @@
 			<assign is="is.counter.value"> is.counter.value = is.counter.value + 1 </assign>
 		</effects>
 
-		<effects mode="weighted">
-			<method name="f" weight="1">
+		<effects mode="weighted" dynamic="false">
+			<method name="f" weight="is.counter.value">
 			    <object class="hmi.flipper2.example.Dynamic"> <constructors/> </object> 
 				<arguments>
 					<value class="String" constant="Choice A" />
 				</arguments>
 			</method>
-			<method name="f" weight="1">
+			<method name="f" weight="0.5 + 0.5">
 			    <object class="hmi.flipper2.example.Dynamic"> <constructors/> </object> 
 				<arguments>
 					<value class="String" constant="Choice B" />

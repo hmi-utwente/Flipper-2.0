@@ -95,7 +95,11 @@ public class Template {
 	
 	private EffectList handle_effects(SimpleElement el) throws FlipperException {
 		String a_effect_mode = el.attr.get("mode");
-		EffectList effects = new EffectList(( a_effect_mode != null && a_effect_mode.equals("weighted")) );
+		String a_dynamic_mode = el.attr.get("dynamic");
+		EffectList effects = new EffectList(
+								( a_effect_mode != null && a_effect_mode.equals("weighted")),
+								( a_dynamic_mode != null && a_dynamic_mode.equals("true"))
+						);
 		for (SimpleElement ee : el.children) {
 			if ( ee.tag.equals("javascript"))
 				this.tf.tc.is.execute(ee.characters.toString());
@@ -157,7 +161,7 @@ public class Template {
 		} else
 			throw new FlipperException("UNKNOWN effect: " + ee.tag);
 	    if (effect_weight != null)
-			result.setWeight((new Double(effect_weight)).doubleValue());
+			result.setWeight(effect_weight);
 	    return result;
 	}
 	
