@@ -37,7 +37,7 @@ public class FlipperLauncherThread extends Thread {
 
 	private ArrayList<FlipperTemplateWatcher> watchedTemplates;
 	
-	private TemplateController tc;
+	protected TemplateController tc;
 	
 	public FlipperLauncherThread() {
 		this(null);
