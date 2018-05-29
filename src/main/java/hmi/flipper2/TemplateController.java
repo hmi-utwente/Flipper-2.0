@@ -99,6 +99,7 @@ public class TemplateController {
 	
 	private String name;
 	private Database db;
+	public FlipperDebugger fd = null;
 	public int	cid; // controller id in Database
 	private List<TemplateFile> tf_list;
 	List<Template> base_templates, cond_templates;
@@ -159,6 +160,17 @@ public class TemplateController {
 				is.eval(libCode);
 			}
 		}
+	}
+	
+	/**
+	 * This method sets a debugger object an for a running TemplateController.
+	 * Debuuger objects must inherit from FlipperDebugger 
+	 * 
+	 * @param fd
+	 *            A flipper debugger object or null
+	 */
+	public void setDebugger(FlipperDebugger fd) {
+		this.fd = fd;
 	}
 	
 	/**
@@ -260,6 +272,8 @@ public class TemplateController {
 			boolean changed = false;
 			this.conditional_stack = null;
 			//
+			if ( this.fd != null )
+				this.fd.log(this.name, "checkTemplates", "start");
 			for (Template template : filterTemplates(this.base_templates, templateFilter) ) {
 					changed =  checkTemplate(template) || changed;
 					while ( this.conditional_stack != null ) {
@@ -268,6 +282,8 @@ public class TemplateController {
 						checkTemplate(toCheck);
 					}
 			}
+			if ( this.fd != null )
+				this.fd.log(this.name, "checkTemplates", "finish");
 			//
 			if (changed) {
 				is.commit(); // commit the information state

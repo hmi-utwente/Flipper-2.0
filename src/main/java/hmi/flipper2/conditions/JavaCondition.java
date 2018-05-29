@@ -8,7 +8,8 @@ public class JavaCondition extends Condition {
 
 	private JavaEffect booleanEffect;
 	
-	public JavaCondition(JavaEffect booleanEffect) throws FlipperException {
+	public JavaCondition(String id, JavaEffect booleanEffect) throws FlipperException {
+		super(id);
 		if ( booleanEffect.isAssign() )
 			throw new FlipperException("JavaCondition:effect cannot be is_assign: "+booleanEffect);
 		this.booleanEffect = booleanEffect;
@@ -20,7 +21,10 @@ public class JavaCondition extends Condition {
 		Object b = booleanEffect.doIt(is);
 		
 		try {
-			return ((Boolean)b).booleanValue();
+			boolean res = ((Boolean)b).booleanValue();
+			if ( is.tc.fd != null )
+				is.tc.fd.precondition(id, this.booleanEffect.toString(), res);
+			return res;
 		} catch (ClassCastException e) {
 			throw new FlipperException("JavaCondition: condition must be boolean: "+booleanEffect.toString());
 		}

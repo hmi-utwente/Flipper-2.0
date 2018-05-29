@@ -78,9 +78,9 @@ public class Template {
 		preconditions = new ConditionList(el.attr.get("mode"));
 		for (SimpleElement pc : el.children) {
 			if (pc.tag.equals("condition")) {
-				preconditions.add(new JsCondition(pc.characters.toString()));
+				preconditions.add(new JsCondition((this.id+":"+this.name), pc.characters.toString()));
 			} else if (pc.tag.equals("function") || pc.tag.equals("method")) {
-				preconditions.add(new JavaCondition((JavaEffect)handle_effect(this, tf.tc.is, pc)));
+				preconditions.add(new JavaCondition((this.id+":"+this.name), (JavaEffect)handle_effect(this, tf.tc.is, pc)));
 			} else if (pc.tag.equals("javascript")) {
 				this.tf.tc.is.execute(pc.characters.toString());
 			} else
@@ -112,13 +112,14 @@ public class Template {
 	public static Effect handle_effect(Template template, Is is, SimpleElement ee) throws FlipperException {
 		Effect result = null;
 		
+		String id = template.id+":"+template.name;
 		String effect_weight = ee.attr.get("weight");
 	    if (ee.tag.equals("assign")) {
-			result = new AssignEffect(ee.attr.get("is"), ee.characters.toString());
+			result = new AssignEffect(id, ee.attr.get("is"), ee.characters.toString());
 		} else if (ee.tag.equals("db")) {
 			throw new RuntimeException("INCOMPLETE: DB ELEMENT: " + ee);
 		} else if (ee.tag.equals("checktemplates")) {
-			result = new TemplateEffect(ee.attr.get("regexpr"),ee.attr.get("isregexpr"));
+			result = new TemplateEffect(id, ee.attr.get("regexpr"),ee.attr.get("isregexpr"));
 		} else if (ee.tag.equals("function") || ee.tag.equals("method") || ee.tag.equals("behaviour")) {
 			boolean isFunction = ee.tag.equals("function");
 			String a_is = ee.attr.get("is");
@@ -151,11 +152,11 @@ public class Template {
 			}
 			Effect newEffect = null;
 			if (ee.tag.equals("function")) {
-				newEffect = new FunctionJavaEffect(template, a_is, a_is_type, a_class, a_name, arguments);
+				newEffect = new FunctionJavaEffect(id, template, a_is, a_is_type, a_class, a_name, arguments);
 			} else if (ee.tag.equals("method")) {
-				newEffect = new MethodJavaEffect(template, a_is, a_is_type, a_class, a_persistent, constructors, a_name, arguments, a_mode);
+				newEffect = new MethodJavaEffect(id, template, a_is, a_is_type, a_class, a_persistent, constructors, a_name, arguments, a_mode);
 			} else if (ee.tag.equals("behaviour")) {
-				newEffect = new BehaviourJavaEffect(template, a_is, a_is_type, a_class, a_persistent, constructors, a_name, arguments, a_mode);
+				newEffect = new BehaviourJavaEffect(id, template, a_is, a_is_type, a_class, a_persistent, constructors, a_name, arguments, a_mode);
 			}
 			result = newEffect;
 		} else
@@ -200,13 +201,19 @@ public class Template {
 	}
 	
 	public boolean check(Is is) throws FlipperException {
-		// System.out.println("!!! Checking template: "+this.id);
+		boolean res;
+		
+		if ( is.tc.fd != null )
+			is.tc.fd.log(this.name, "check", "start");
 		if ( preconditions.checkIt(is) ) {
 			for(EffectList effects: listOfEffectList)
 				effects.doIt(is);
-			return true;
-		}
-		return false;
+			res = true;
+		} else
+			res = false;
+		if ( is.tc.fd != null )
+			is.tc.fd.log(this.name, "check", "finish{res="+res+"}");
+		return res;
 	}
 	
 	public void doInitializeEffects() throws FlipperException {

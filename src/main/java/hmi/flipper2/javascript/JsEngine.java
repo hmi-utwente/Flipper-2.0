@@ -3,6 +3,8 @@ package hmi.flipper2.javascript;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import hmi.flipper2.TemplateController;
+import hmi.flipper2.FlipperDebugger;
 
 import hmi.flipper2.FlipperException;
 
@@ -10,14 +12,16 @@ public class JsEngine {
 
 	private ScriptEngineManager mgr;
 	private ScriptEngine engine;
+	public  TemplateController tc;
 	
-	public JsEngine() throws FlipperException {
-		js_init();
+	public JsEngine(TemplateController tc) throws FlipperException {
+		js_init(tc);
 	}
 	
-	protected void js_init() throws FlipperException {
+	protected void js_init(TemplateController tc) throws FlipperException {
 		this.mgr = new ScriptEngineManager();
 		this.engine = mgr.getEngineByName("nashorn");
+		this.tc = tc;
 	}
 
 	public JsValue execute(String script) throws FlipperException {
@@ -32,12 +36,20 @@ public class JsEngine {
 	
 	public Object eval(String script) throws FlipperException {
 		try {
-			return engine.eval(script);
+			if (this.tc.fd != null )
+				this.tc.fd.js_execute(script);
+			Object res = engine.eval(script);
+			if ( res != null )
+				if (this.tc.fd != null )
+					this.tc.fd.js_result(res.toString());
+			return res;
 		} catch (ScriptException e) {
 			int count = 1;
 			StringBuffer sb = new StringBuffer();
 			for (String line : script.split("\\r?\\n"))
 				sb.append(String.format("%3d ", count++) + line + "\n");
+			if (this.tc.fd != null )
+				this.tc.fd.js_error(sb.toString());
 			throw new FlipperException(e, sb.toString());
 		}
 	}

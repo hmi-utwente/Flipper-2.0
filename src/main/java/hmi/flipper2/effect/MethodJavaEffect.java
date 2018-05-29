@@ -6,9 +6,9 @@ import hmi.flipper2.value.JavaValueList;
 
 public class MethodJavaEffect extends JavaEffect {
 	
-	public MethodJavaEffect(Template template, String is_assign, String is_type, String className, String persistent, JavaValueList constructors, String functionName, JavaValueList arguments, String objectMode)
+	public MethodJavaEffect(String id, Template template, String is_assign, String is_type, String className, String persistent, JavaValueList constructors, String functionName, JavaValueList arguments, String objectMode)
 			throws FlipperException {
-		super(template, is_assign, is_type, className, persistent, constructors, functionName, arguments, CallMode.CALL_METHOD, decode_mode(objectMode));
+		super(id, template, is_assign, is_type, className, persistent, constructors, functionName, arguments, CallMode.CALL_METHOD, decode_mode(objectMode));
 	}
 	
 	public static final ObjectMode decode_mode(String mode) throws FlipperException {

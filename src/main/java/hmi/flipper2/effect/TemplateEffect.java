@@ -7,7 +7,8 @@ public class TemplateEffect extends Effect {
 
 	private String regexpr;
 	private String isregexpr;
-	public TemplateEffect(String regexpr, String isregexpr) throws FlipperException {	
+	public TemplateEffect(String id, String regexpr, String isregexpr) throws FlipperException {
+		super(id);
 		if ( regexpr != null && isregexpr != null )
 			throw new FlipperException("TemplateEffect cannot have both regexpr and isregexpr");
 		this.regexpr	= regexpr;

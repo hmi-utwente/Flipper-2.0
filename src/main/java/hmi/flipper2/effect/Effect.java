@@ -10,7 +10,13 @@ public abstract class Effect {
 	
 	private double rr_from, rr_to; // random range bounds
 	
+	public String id;
+	
 	public abstract Object doIt(Is is) throws FlipperException;
+	
+	public Effect(String id) {	
+		this.id = id;
+	}
 	
 	public void setWeight(String js_weight) {
 		this.js_weight = js_weight;

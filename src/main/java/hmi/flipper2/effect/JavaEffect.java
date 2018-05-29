@@ -48,8 +48,9 @@ public class JavaEffect extends Effect {
 	protected Object		callObject = null;
 	
 	
-	public JavaEffect(Template template, String is_assign, String is_type, String className, String persistent, JavaValueList constructors, String callName, JavaValueList arguments, CallMode callMode,
+	public JavaEffect(String id, Template template, String is_assign, String is_type, String className, String persistent, JavaValueList constructors, String callName, JavaValueList arguments, CallMode callMode,
 			ObjectMode objectMode) throws FlipperException {
+		super(id);
 		try {
 			this.template = template;
 			this.is_assign = is_assign; 		
@@ -116,6 +117,8 @@ public class JavaEffect extends Effect {
 	@Override
 	public Object doIt(Is is) throws FlipperException {
 		Object return_obj =  executeCall(this.arguments.objectArray());
+		if ( is.tc.fd != null )
+			is.tc.fd.effect(id, this.toString());
 		if ( is_assign != null ) {
 			if (this.vt_type == ValueTransferType.TYPE_OBJECT ) {
 				is.assignObject2Js(is_assign, return_obj);
