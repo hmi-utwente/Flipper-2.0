@@ -10,7 +10,7 @@ public class FlipperDebugger {
 		
 		private boolean debugJS = false;
 		private boolean debugIS = false;
-		private boolean singleStep = false;
+		private boolean singleStep = true;
 		
 		private TemplateController tc;	
 		
@@ -52,12 +52,17 @@ public class FlipperDebugger {
 			out(Channel.LOG, "#"+id + ": " +event+"\t"+v);
 		}
 		
+		int stepsToDo = 0;
+		
 		private boolean handle_step(String command) {
 			if ( command.length() == 0 ) 
 				return true;
 			if ( command.equals("cont") || command.equals("continue") ) {
 				this.singleStep = false;
 				return true;
+			}
+			if ( command.equals("stop") || command.equals("exit")) {
+				System.exit(0);
 			}
 			if ( command.equals("is") ) {
 				try {
@@ -67,12 +72,20 @@ public class FlipperDebugger {
 				}
 				return false;
 			}
+			if ( command.startsWith("do ") ) {
+				this.stepsToDo = Integer.parseInt(command.substring(3));
+				return true;
+			}
 		    System.out.println("UNKNOWN COMMAND: "+command);
 			return false;
 		}
 		
 		public void out(Channel ch, String message) {
 			System.out.println(message);
+			if ( this.stepsToDo > 1 ) {
+				this.stepsToDo --;
+				return;
+			}
 			while ( singleStep ) {
 				System.out.print("Step>");
 				BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
