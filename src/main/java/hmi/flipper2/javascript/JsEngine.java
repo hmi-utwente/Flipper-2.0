@@ -4,8 +4,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import hmi.flipper2.TemplateController;
-import hmi.flipper2.FlipperDebugger;
-
+import hmi.flipper2.debugger.FlipperDebugger;
 import hmi.flipper2.FlipperException;
 
 public class JsEngine {

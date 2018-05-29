@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import hmi.flipper2.debugger.FlipperDebugger;
 import hmi.flipper2.effect.EffectList;
 import hmi.flipper2.postgres.Database;
 import hmi.flipper2.sax.SimpleSAXParser;
@@ -273,7 +274,7 @@ public class TemplateController {
 			this.conditional_stack = null;
 			//
 			if ( this.fd != null )
-				this.fd.log(this.name, "checkTemplates", "start");
+				this.fd.start_checktemplates(this.name);
 			for (Template template : filterTemplates(this.base_templates, templateFilter) ) {
 					changed =  checkTemplate(template) || changed;
 					while ( this.conditional_stack != null ) {
@@ -283,7 +284,7 @@ public class TemplateController {
 					}
 			}
 			if ( this.fd != null )
-				this.fd.log(this.name, "checkTemplates", "finish");
+				this.fd.end_checktemplates(this.name);;
 			//
 			if (changed) {
 				is.commit(); // commit the information state
