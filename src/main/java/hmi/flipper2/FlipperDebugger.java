@@ -1,9 +1,16 @@
 package hmi.flipper2;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 public class FlipperDebugger {
 
-		private static final boolean debugJS = false;
-		private static final boolean debugIS = false;
+		enum Channel { JS, CE, LOG };
+		
+		private boolean debugJS = false;
+		private boolean debugIS = false;
+		private boolean singleStep = false;
 		
 		private TemplateController tc;	
 		
@@ -11,30 +18,27 @@ public class FlipperDebugger {
 			this.tc = tc;
 		}
 		
-		public void setTc(TemplateController tc) {
-		}
-
 		public void js_execute(String script) {
 			if ( debugJS )
-				System.out.println("JS: "+script);
+				out(Channel.JS, "JS: "+script);
 		}
 		
 		public void js_result(String result) {
 			if ( debugJS )
-				System.out.println("JS-RESULT: "+result);
+				out(Channel.JS, "JS-RESULT: "+result);
 		}
 		
 		public void js_error(String error) {
 			if ( debugJS )
-				System.out.println("JS-ERROR: "+error);
+				out(Channel.JS, "JS-ERROR: "+error);
 		}
 		
 		public void precondition(String id, String descr, boolean v) {
-			System.out.println("PRECONDITION{"+id+"}="+v+":"+descr);
+			out(Channel.CE, "PRECONDITION{"+id+"}="+v+":"+descr);
 		}
 		
 		public void effect(String id, String descr) {
-			System.out.println("EFFECT{"+id+"}"+":"+descr);
+			out(Channel.CE, "EFFECT{"+id+"}"+":"+descr);
 			if ( debugIS ) {
 				try {
 					System.out.println("IS: "+this.tc.getIs("is"));
@@ -45,6 +49,42 @@ public class FlipperDebugger {
 		}
 		
 		public void log(String id, String event, String v) {
-			System.out.println("#"+id + ": " +event+"\t"+v);
+			out(Channel.LOG, "#"+id + ": " +event+"\t"+v);
 		}
+		
+		private boolean handle_step(String command) {
+			if ( command.length() == 0 ) 
+				return true;
+			if ( command.equals("cont") || command.equals("continue") ) {
+				this.singleStep = false;
+				return true;
+			}
+			if ( command.equals("is") ) {
+				try {
+					System.out.println("IS: "+this.tc.getIs("is"));
+				}
+				catch (FlipperException fe) {
+				}
+				return false;
+			}
+		    System.out.println("UNKNOWN COMMAND: "+command);
+			return false;
+		}
+		
+		public void out(Channel ch, String message) {
+			System.out.println(message);
+			while ( singleStep ) {
+				System.out.print("Step>");
+				BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+				try {
+					if ( handle_step( reader.readLine() ) )
+						return;
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				// System.console().readLine();
+			}
+		}
+		
 }
