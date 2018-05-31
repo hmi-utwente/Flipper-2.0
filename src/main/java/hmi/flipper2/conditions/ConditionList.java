@@ -14,6 +14,8 @@ public class ConditionList extends ArrayList<Condition> {
 	
 	boolean andMode;
 	
+	public boolean lastCheck;
+	
 	public ConditionList(String mode) throws FlipperException {
 		if (mode == null) 
 			andMode = true;
@@ -25,17 +27,22 @@ public class ConditionList extends ArrayList<Condition> {
 			throw new FlipperException("ConditionList: unknown mode: "+mode);
 	}
 	
+	private final boolean mark(boolean v) {
+		this.lastCheck = v;
+		return v;
+	}
+	
 	public boolean checkIt(Is is) throws FlipperException {
 		if ( andMode ) {
 			for(Condition c: this)
 				if ( !c.checkIt(is) )
-					return false;
-			return true;
+					return mark(false);
+			return mark(true);
 		} else {
 			for(Condition c: this)
 				if ( c.checkIt(is) )
-					return true;
-			return false;
+					return mark(true);
+			return mark(false);
 		}
 	}
 	

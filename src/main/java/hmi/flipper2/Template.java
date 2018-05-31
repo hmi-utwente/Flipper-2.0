@@ -200,20 +200,31 @@ public class Template {
 		return jvl;
 	}
 	
-	public boolean check(Is is) throws FlipperException {
+	public boolean checkPreconditions(Is is, boolean executeEffectImmediate) throws FlipperException {
 		boolean res;
 		
 		if ( is.tc.fd != null )
-			is.tc.fd.log(this.name, "check", "start");
+			is.tc.fd.log(this.name, "checkpc", "start");
 		if ( preconditions.checkIt(is) ) {
-			for(EffectList effects: listOfEffectList)
-				effects.doIt(is);
+			if ( executeEffectImmediate )
+				executeSelectedEffects(is);
 			res = true;
 		} else
 			res = false;
 		if ( is.tc.fd != null )
-			is.tc.fd.log(this.name, "check", "finish{res="+res+"}");
+			is.tc.fd.log(this.name, "checkpc", "finish{res="+res+"}");
 		return res;
+	}
+	
+	public void executeSelectedEffects(Is is) throws FlipperException {
+		if ( is.tc.fd != null )
+			is.tc.fd.log(this.name, "execeffect", "start");
+		if ( preconditions.lastCheck ) {
+				for(EffectList effects: listOfEffectList)
+					effects.doIt(is);
+		}
+		if ( is.tc.fd != null )
+			is.tc.fd.log(this.name, "execeffect", "finish");
 	}
 	
 	public void doInitializeEffects() throws FlipperException {

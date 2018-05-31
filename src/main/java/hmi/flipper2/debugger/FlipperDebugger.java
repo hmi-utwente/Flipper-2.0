@@ -18,8 +18,8 @@ public class FlipperDebugger {
 	private boolean debugIS = false;
 	private boolean debugPC = false;
 	private boolean debugEF = false;
-	private boolean debugCPU = false;
-	private boolean debugMEM = false;
+	private boolean debugCPU = true;
+	private boolean debugMEM = true;
 	private boolean singleStep = false;
 
 	private TemplateController tc;

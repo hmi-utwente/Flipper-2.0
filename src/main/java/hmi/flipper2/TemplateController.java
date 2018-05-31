@@ -103,7 +103,7 @@ public class TemplateController {
 	public FlipperDebugger fd = null;
 	public int	cid; // controller id in Database
 	private List<TemplateFile> tf_list;
-	List<Template> base_templates, cond_templates;
+	List<Template> all_templates, base_templates, cond_templates;
 	Template conditional_stack = null;
 	public  Is is;
 	
@@ -210,6 +210,7 @@ public class TemplateController {
 	
 	private void addCheckTemplates(List<Template> templates) throws FlipperException {
 		for (Template t : templates ) {
+			this.all_templates.add(t);
 			if ( t.conditional )
 				this.cond_templates.add(t);
 			else
@@ -224,6 +225,7 @@ public class TemplateController {
 	}
 	
 	private void rebuildCheckTemplates() throws FlipperException {
+		this.all_templates  = new ArrayList<Template>();
 		this.base_templates = new ArrayList<Template>();
 		this.cond_templates = new ArrayList<Template>();
 		for(TemplateFile tf: this.tf_list) 
@@ -276,15 +278,22 @@ public class TemplateController {
 			if ( this.fd != null )
 				this.fd.start_checktemplates(this.name);
 			for (Template template : filterTemplates(this.base_templates, templateFilter) ) {
-					changed =  checkTemplate(template) || changed;
+					changed =  checkPreconditions(template, Behaviour.IMMEDIATE_EFFECT) || changed;
 					while ( this.conditional_stack != null ) {
 						Template toCheck = this.conditional_stack;
 						this.conditional_stack = this.conditional_stack.pop();
-						checkTemplate(toCheck);
+						checkPreconditions(toCheck, Behaviour.IMMEDIATE_EFFECT);
 					}
 			}
+			if ( ! Behaviour.IMMEDIATE_EFFECT ) {
+				for (Template template : this.all_templates) {
+					if ( template.preconditions.lastCheck ) {
+						executeEffects(template);
+					}
+				}
+			}
 			if ( this.fd != null )
-				this.fd.end_checktemplates(this.name);;
+				this.fd.end_checktemplates(this.name);
 			//
 			if (changed) {
 				is.commit(); // commit the information state
@@ -315,9 +324,14 @@ public class TemplateController {
 		return checkTemplates(null);
 	}
 	
-	private boolean checkTemplate(Template t) throws FlipperException {
+	private boolean checkPreconditions(Template t, boolean executeEffectImmediate) throws FlipperException {
 		this.registerCurrentTemplate(this.name, t.id, t.name);
-		return t.check(is);
+		return t.checkPreconditions(is, executeEffectImmediate);
+	}
+	
+	private void executeEffects(Template t) throws FlipperException {
+		this.registerCurrentTemplate(this.name, t.id, t.name);
+		t.executeSelectedEffects(is);
 	}
 	
 	/**
