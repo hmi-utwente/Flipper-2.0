@@ -1,5 +1,6 @@
 package hmi.flipper2.conditions;
 
+import hmi.flipper2.Config;
 import hmi.flipper2.FlipperException;
 import hmi.flipper2.Is;
 import hmi.flipper2.effect.JavaEffect;
@@ -19,12 +20,8 @@ public class JavaCondition extends Condition {
 	@Override
 	public boolean checkIt(Is is) throws FlipperException {
 		Object b = booleanEffect.doIt(is);
-		
 		try {
-			boolean res = ((Boolean)b).booleanValue();
-			if ( is.tc.fd != null )
-				is.tc.fd.precondition(id, this.booleanEffect.toString(), res);
-			return res;
+			return ((Boolean)b).booleanValue();
 		} catch (ClassCastException e) {
 			throw new FlipperException("JavaCondition: condition must be boolean: "+booleanEffect.toString());
 		}

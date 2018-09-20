@@ -16,6 +16,7 @@
     
        <initeffects>
  			<assign is="is.counter.autoinit"> "AUTOINIT" </assign>
+<!--  			<system command="debugger" arg="off"/> -->
  	  </initeffects>
 		
       <preconditions mode="and">
@@ -26,7 +27,7 @@
 				}
 			]]></javascript>
 			
-          	<condition> chkBound(is.counter.value, 10) </condition>
+          	<condition> chkBound(is.counter.value, 5) </condition>
           	
 			<function class="hmi.flipper2.example.Dynamic" name="alwaysTrue"> </function>
           	

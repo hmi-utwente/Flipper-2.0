@@ -1,134 +1,143 @@
 package hmi.flipper2.debugger;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
-
-import hmi.flipper2.FlipperException;
 import hmi.flipper2.TemplateController;
 
 public class FlipperDebugger {
-
-	enum Channel {
-		JS, CE, LOG
+	
+	enum Kind {
+		Start, Stop
 	};
+	
+	enum Action {
+		CheckTemplates, CheckTemplate, Precondition, Effect, JavascriptExec, JavaExec, Other
+	};
+	
+	protected long totalTimes[] = null;
+	
+	private FlipperState state = null;
+	
+	public void handle_action(FlipperState s) {
+		boolean verbose = true;
+		
+		if ( verbose )
+			System.out.println("#"+s.action.name() + "\t" + s.id + "\t"+pt(s.duration()));
+		switch (s.action) {
+		case CheckTemplates: {
+			for (Action a : Action.values()) {
+				System.out.println(a.name() + " = " + pt(this.totalTimes[a.ordinal()]));
+			}
+		}
+			break;
+		case CheckTemplate:
+			break;
+		case Precondition:
+			break;
+		case Effect:
+			break;
+		case JavascriptExec:
+			break;
+		case JavaExec:
+			break;
+		case Other:
+			throw new RuntimeException("Other actions Not Implemented Yet");
+		}
+	}
+	
+	private void handle_startstop(Kind kind, Action action, String other_action, String id, String arg) {
+		boolean verbose = false;
+		
+		if ( kind == Kind.Start ) {
+			state = state.push();
+			state.action = action;
+			state.id = id;
+			state.startTime = System.nanoTime();
+			state.startArg = arg;
+			if ( verbose )
+				System.out.println(kind.name() + "\t" + action.name() + "\t" + id);
+		} else {
+			state.stopTime = System.nanoTime();
+			state.stopArg = arg;
+			if ( verbose )
+				System.out.println(kind.name() + "\t" + action.name() + "\t" + id + "\t("+pt(state.duration())+")");
+			this.totalTimes[action.ordinal()] += state.duration();
+			handle_action(state);
+			state = state.pop();
+		}
+				
+	}
+	
+	public void start_CheckTemplates(String id, String comment) {
+		this.handle_startstop(Kind.Start, Action.CheckTemplates, null, id, comment);
+	}
+	
+	public void stop_CheckTemplates(String id, String comment) {
+		this.handle_startstop(Kind.Stop, Action.CheckTemplates, null, id, comment);
+	}
+	
+	public void start_CheckTemplate(String id, String comment) {
+		this.handle_startstop(Kind.Start, Action.CheckTemplate, null, id, comment);
+	}
+	
+	public void stop_CheckTemplate(String id, String comment) {
+		this.handle_startstop(Kind.Stop, Action.CheckTemplate, null, id, comment);
+	}
+	
+	public void start_Precondition(String id, String comment) {
+		this.handle_startstop(Kind.Start, Action.Precondition, null, id, comment);
+	}
+	
+	public void stop_Precondition(String id, String comment) {
+		this.handle_startstop(Kind.Stop, Action.Precondition, null, id, comment);
+	}
+	
+	public void start_Effect(String id, String comment) {
+		this.handle_startstop(Kind.Start, Action.Effect, null, id, comment);
+	}
+	
+	public void stop_Effect(String id, String comment) {
+		this.handle_startstop(Kind.Stop, Action.Effect, null, id, comment);
+	}
+	
+	public void start_JavascriptExec(String id, String comment) {
+		this.handle_startstop(Kind.Start, Action.JavascriptExec, null, id, comment);
+	}
+	
+	public void stop_JavascriptExec(String id, String comment) {
+		this.handle_startstop(Kind.Stop, Action.JavascriptExec, null, id, comment);
+	}
+	
+	public void start_JavaExec(String id, String comment) {
+		this.handle_startstop(Kind.Start, Action.JavaExec, null, id, comment);
+	}
+	
+	public void stop_JavaExec(String id, String comment) {
+		this.handle_startstop(Kind.Stop, Action.JavaExec, null, id, comment);
+	}
 
-	private boolean debugJS = false;
-	private boolean debugIS = false;
-	private boolean debugPC = false;
-	private boolean debugEF = false;
-	private boolean debugCPU = true;
-	private boolean debugMEM = true;
-	private boolean singleStep = false;
+	public static final String pt(long t) {
+		if ( t != (long)-1 )
+			return ((int) (t / 1000)) + "us";
+		else 
+			return "EMPTY";
+	}
 
-	private TemplateController tc;
-	private CpuMemoryUsage cmu = new CpuMemoryUsage();
+	protected TemplateController tc;
 
 	public FlipperDebugger(TemplateController tc) {
 		this.tc = tc;
+		start();
 	}
 	
-	public void start_checktemplates(String name) {
-		this.log(name, "checkTemplates", "start");
-		if ( debugCPU )
-			this.cmu.startCpuTimer();
-	}
-
-	public void end_checktemplates(String name) {
-		this.log(name, "checkTemplates", "end");
-		if (debugCPU) {
-			double cpu_usage = cmu.getCpuTimer();
-			long elapsedTime = cmu.elapsedTime();
-			System.out.println(
-					"#CPU usage elapsed=" + elapsedTime + "ms: m1=" + cpu_usage + "%\tm2=" + cmu.getProcessCpuLoad() + "%");
-		}
-		if (debugMEM)
-			System.out.println("#Memory[max/use/tot/free Mb]: " + cmu.maxMB() + "/" + cmu.useMB() + "/" + cmu.totalMB()
-					+ "/" + cmu.freeMB());
-	}
-
-	public void js_execute(String script) {
-		if (debugJS)
-			out(Channel.JS, "JS: " + script);
-	}
-
-	public void js_result(String result) {
-		if (debugJS)
-			out(Channel.JS, "JS-RESULT: " + result);
-	}
-
-	public void js_error(String error) {
-		if (debugJS)
-			out(Channel.JS, "JS-ERROR: " + error);
-	}
-
-	public void precondition(String id, String descr, boolean v) {
-		if (debugPC)
-			out(Channel.CE, "PRECONDITION{" + id + "}=" + v + ":" + descr);
-	}
-
-	public void effect(String id, String descr) {
-		if (debugEF) {
-			out(Channel.CE, "EFFECT{" + id + "}" + ":" + descr);
-			if (debugIS) {
-				try {
-					System.out.println("IS: " + this.tc.getIs("is"));
-				} catch (FlipperException fe) {
-				}
-			}
+	private void start() {
+		this.state = FlipperState.create(8);
+		this.totalTimes = new long[Action.values().length];
+		for (Action a : Action.values() ) {
+			this.totalTimes[a.ordinal()] = 0;
 		}
 	}
-
-	public void log(String id, String event, String v) {
-		out(Channel.LOG, "#" + id + ": " + event + "\t" + v);
+	
+	public void restart() {
+		start();
 	}
-
-	int stepsToDo = 0;
-
-	private boolean handle_step(String command) {
-		if (command.length() == 0)
-			return true;
-		if (command.equals("cont") || command.equals("continue")) {
-			this.singleStep = false;
-			return true;
-		}
-		if (command.equals("stop") || command.equals("exit")) {
-			System.exit(0);
-		}
-		if (command.equals("is")) {
-			try {
-				System.out.println("IS: " + this.tc.getIs("is"));
-			} catch (FlipperException fe) {
-			}
-			return false;
-		}
-		if (command.startsWith("do ")) {
-			this.stepsToDo = Integer.parseInt(command.substring(3));
-			return true;
-		}
-		System.out.println("UNKNOWN COMMAND: " + command);
-		return false;
-	}
-
-	public void out(Channel ch, String message) {
-		System.out.println(message);
-		if (this.stepsToDo > 1) {
-			this.stepsToDo--;
-			return;
-		}
-		while (singleStep) {
-			System.out.print("Step>");
-			BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-			try {
-				if (handle_step(reader.readLine()))
-					return;
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			// System.console().readLine();
-		}
-	}
-
+	
 }

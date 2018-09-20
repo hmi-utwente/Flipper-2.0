@@ -13,6 +13,7 @@ import hmi.flipper2.effect.EffectList;
 import hmi.flipper2.effect.FunctionJavaEffect;
 import hmi.flipper2.effect.JavaEffect;
 import hmi.flipper2.effect.MethodJavaEffect;
+import hmi.flipper2.effect.SystemEffect;
 import hmi.flipper2.effect.TemplateEffect;
 import hmi.flipper2.sax.SimpleElement;
 import hmi.flipper2.value.ConstantJavaValue;
@@ -159,6 +160,8 @@ public class Template {
 				newEffect = new BehaviourJavaEffect(id, template, a_is, a_is_type, a_class, a_persistent, constructors, a_name, arguments, a_mode);
 			}
 			result = newEffect;
+		} else if (ee.tag.equals("system")) {
+			result = new SystemEffect("system", ee.attr.get("command"),ee.attr.get("arg"));
 		} else
 			throw new FlipperException("UNKNOWN effect: " + ee.tag);
 	    if (effect_weight != null)
@@ -203,28 +206,20 @@ public class Template {
 	public boolean checkPreconditions(Is is, boolean executeEffectImmediate) throws FlipperException {
 		boolean res;
 		
-		if ( is.tc.fd != null )
-			is.tc.fd.log(this.name, "checkpc", "start");
 		if ( preconditions.checkIt(is) ) {
 			if ( executeEffectImmediate )
 				executeSelectedEffects(is);
 			res = true;
 		} else
 			res = false;
-		if ( is.tc.fd != null )
-			is.tc.fd.log(this.name, "checkpc", "finish{res="+res+"}");
 		return res;
 	}
 	
 	public void executeSelectedEffects(Is is) throws FlipperException {
-		if ( is.tc.fd != null )
-			is.tc.fd.log(this.name, "execeffect", "start");
 		if ( preconditions.lastCheck ) {
 				for(EffectList effects: listOfEffectList)
 					effects.doIt(is);
 		}
-		if ( is.tc.fd != null )
-			is.tc.fd.log(this.name, "execeffect", "finish");
 	}
 	
 	public void doInitializeEffects() throws FlipperException {

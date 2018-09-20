@@ -79,11 +79,23 @@ public class Is extends JsEngine {
 	}
 	
 	public void assignJavascript(String is_var, String js_expr) throws FlipperException {
+		//do we need to dereference the variable, i.e., replace the path with the value of that state variable?
+        if (is_var.startsWith("*"))
+        {
+            is_var=getIs(is_var.substring(1));
+            is_var=is_var.substring(1,is_var.length()-1);
+        }
 		registerUpdate(is_var);
 		execute(is_var + " = " + js_expr);
 	}
 	
 	public void assignJSONString(String is_var, String json_expr) throws FlipperException {
+		//do we need to dereference the variable, i.e., replace the path with the value of that state variable?
+        if (is_var.startsWith("*"))
+        {
+            is_var=getIs(is_var.substring(1));
+            is_var=is_var.substring(1,is_var.length()-1);
+        }
 		registerUpdate(is_var);
 		assignJSONtoJs(is_var, json_expr);
 	}

@@ -1,5 +1,6 @@
 package hmi.flipper2.conditions;
 
+import hmi.flipper2.Config;
 import hmi.flipper2.FlipperException;
 import hmi.flipper2.Is;
 
@@ -14,10 +15,7 @@ public class JsCondition extends Condition {
 	
 	@Override
 	public boolean checkIt(Is is) throws FlipperException {
-		boolean res =  is.condition(this.condition);
-		if ( is.tc.fd != null )
-			is.tc.fd.precondition(id, this.condition, res);
-		return res;
+		return is.condition(this.condition);
 	}
 
 }

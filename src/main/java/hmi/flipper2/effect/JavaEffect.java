@@ -3,6 +3,8 @@ package hmi.flipper2.effect;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
+import hmi.flipper2.Config;
 import hmi.flipper2.FlipperException;
 import hmi.flipper2.Is;
 import hmi.flipper2.Is.ValueTransferType;
@@ -116,9 +118,12 @@ public class JavaEffect extends Effect {
 	
 	@Override
 	public Object doIt(Is is) throws FlipperException {
-		Object return_obj =  executeCall(this.arguments.objectArray());
-		if ( is.tc.fd != null )
-			is.tc.fd.effect(id, this.toString());
+		Object method_args[] = this.arguments.objectArray();
+		if ( Config.debugging && is.tc.dbg != null )
+			is.tc.dbg.start_JavaExec(id, this.toString());
+		Object return_obj =  executeCall(method_args);
+		if ( Config.debugging && is.tc.dbg != null )
+			is.tc.dbg.stop_JavaExec(id, null);
 		if ( is_assign != null ) {
 			if (this.vt_type == ValueTransferType.TYPE_OBJECT ) {
 				is.assignObject2Js(is_assign, return_obj);

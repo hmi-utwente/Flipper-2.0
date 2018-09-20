@@ -22,7 +22,9 @@ public class Main {
 			//	"jslibs/underscore-min.js"
 			//});
 				
-			// tc.setDebugger(new FlipperDebugger(tc));
+			if (Config.debugging ) {
+				tc.setDebugger(new FlipperDebugger(tc));
+			}
 			tc.addTemplateFile( tc.resourcePath("example/Flipper2Count.xml") );
 			// tc.addTemplateFile( tc.resourcePath("example/Try.xml") );
 			// tc.addTemplateFile( tc.resourcePath("example/ConditionalTemplates.xml") );

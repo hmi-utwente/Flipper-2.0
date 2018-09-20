@@ -26,7 +26,7 @@ import hmi.flipper2.sax.SimpleSAXParser;
  */
 
 public class TemplateController {
-		
+	
 	/**
 	 * This method creates a new TemplateController.
 	 * 
@@ -100,7 +100,8 @@ public class TemplateController {
 	
 	private String name;
 	private Database db;
-	public FlipperDebugger fd = null;
+	public FlipperDebugger dbg = null;	// the active debugger, when active same as persistent_dbg
+	private FlipperDebugger persistent_dbg = null; // the debugger which is persistent but may be inactive
 	public int	cid; // controller id in Database
 	private List<TemplateFile> tf_list;
 	List<Template> all_templates, base_templates, cond_templates;
@@ -164,14 +165,31 @@ public class TemplateController {
 	}
 	
 	/**
-	 * This method sets a debugger object an for a running TemplateController.
-	 * Debuuger objects must inherit from FlipperDebugger 
+	 * These methods sets a debugger object an for a running TemplateController.
+	 * Debugger objects must inherit from FlipperDebugger. So a debugger may be set 
+	 * the TemplateController which can be switched 'on' by a  <system> tag. 
 	 * 
 	 * @param fd
 	 *            A flipper debugger object or null
 	 */
 	public void setDebugger(FlipperDebugger fd) {
-		this.fd = fd;
+		setDebugger(fd, true);
+	}
+	
+	public void setDebugger(FlipperDebugger fd, boolean onoff) {
+		if ( !Config.debugging && fd!=null )
+			System.err.println("WARNING: Setting FlipperDebugger with Config.debugging=false");
+		this.persistent_dbg = fd;
+		switchDebugger(onoff);
+	}
+	
+	public void switchDebugger(boolean onoff) {
+		if ( onoff ) {
+			this.dbg = persistent_dbg;
+		} else {
+			this.dbg = null;
+		}
+		
 	}
 	
 	/**
@@ -275,15 +293,21 @@ public class TemplateController {
 			boolean changed = false;
 			this.conditional_stack = null;
 			//
-			if ( this.fd != null )
-				this.fd.start_checktemplates(this.name);
+			if ( Config.debugging && this.dbg != null ) {
+				this.dbg.restart();
+				this.dbg.start_CheckTemplates(this.name, null);
+			}
 			for (Template template : filterTemplates(this.base_templates, templateFilter) ) {
+					if ( Config.debugging && this.dbg != null )
+						this.dbg.start_CheckTemplate(template.name, null);
 					changed =  checkPreconditions(template, Behaviour.IMMEDIATE_EFFECT) || changed;
 					while ( this.conditional_stack != null ) {
 						Template toCheck = this.conditional_stack;
 						this.conditional_stack = this.conditional_stack.pop();
 						checkPreconditions(toCheck, Behaviour.IMMEDIATE_EFFECT);
 					}
+					if ( Config.debugging && this.dbg != null )
+						this.dbg.stop_CheckTemplate(template.name, null);
 			}
 			if ( ! Behaviour.IMMEDIATE_EFFECT ) {
 				for (Template template : this.all_templates) {
@@ -292,8 +316,8 @@ public class TemplateController {
 					}
 				}
 			}
-			if ( this.fd != null )
-				this.fd.end_checktemplates(this.name);
+			if ( Config.debugging && this.dbg != null )
+				this.dbg.stop_CheckTemplates(this.name, null);
 			//
 			if (changed) {
 				is.commit(); // commit the information state

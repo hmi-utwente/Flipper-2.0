@@ -5,6 +5,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import hmi.flipper2.TemplateController;
 import hmi.flipper2.debugger.FlipperDebugger;
+import hmi.flipper2.Config;
 import hmi.flipper2.FlipperException;
 
 public class JsEngine {
@@ -35,20 +36,21 @@ public class JsEngine {
 	
 	public Object eval(String script) throws FlipperException {
 		try {
-			if (this.tc.fd != null )
-				this.tc.fd.js_execute(script);
+			if ( Config.debugging && this.tc.dbg != null )
+				this.tc.dbg.start_JavascriptExec("js", script);
+			// System.out.println("XXXXXX->"+script);
 			Object res = engine.eval(script);
-			if ( res != null )
-				if (this.tc.fd != null )
-					this.tc.fd.js_result(res.toString());
+			if ( Config.debugging && this.tc.dbg != null )
+				this.tc.dbg.stop_JavascriptExec("js", (res==null)?null:res.toString());
 			return res;
 		} catch (ScriptException e) {
 			int count = 1;
 			StringBuffer sb = new StringBuffer();
 			for (String line : script.split("\\r?\\n"))
 				sb.append(String.format("%3d ", count++) + line + "\n");
-			if (this.tc.fd != null )
-				this.tc.fd.js_error(sb.toString());
+			
+			if ( Config.debugging && this.tc.dbg != null )
+				this.tc.dbg.stop_JavascriptExec("js","ERROR:"+sb.toString());
 			throw new FlipperException(e, sb.toString());
 		}
 	}
