@@ -16,16 +16,18 @@ public class FlipperDebugger {
 	
 	private FlipperState state = null;
 	
-	public void handle_action(FlipperState s) {
-		boolean verbose = true;
+	public void handle_state(FlipperState s) {
+		boolean verbose = false;
 		
 		if ( verbose )
 			System.out.println("#"+s.action.name() + "\t" + s.id + "\t"+pt(s.duration()));
 		switch (s.action) {
 		case CheckTemplates: {
+			System.out.println("[");
 			for (Action a : Action.values()) {
-				System.out.println(a.name() + " = " + pt(this.totalTimes[a.ordinal()]));
+				System.out.println("\t+ Total Time: "+ String.format("%1$14s", a.name()) + " = " + pt(this.totalTimes[a.ordinal()]));
 			}
+			System.out.println("]");
 		}
 			break;
 		case CheckTemplate:
@@ -44,7 +46,7 @@ public class FlipperDebugger {
 	}
 	
 	private void handle_startstop(Kind kind, Action action, String other_action, String id, String arg) {
-		boolean verbose = false;
+		boolean verbose = true;
 		
 		if ( kind == Kind.Start ) {
 			state = state.push();
@@ -53,65 +55,65 @@ public class FlipperDebugger {
 			state.startTime = System.nanoTime();
 			state.startArg = arg;
 			if ( verbose )
-				System.out.println(kind.name() + "\t" + action.name() + "\t" + id);
+				System.out.println(kind.name() + "\t" + String.format("%1$14s", action.name()) + "\t" + id);
 		} else {
 			state.stopTime = System.nanoTime();
 			state.stopArg = arg;
 			if ( verbose )
-				System.out.println(kind.name() + "\t" + action.name() + "\t" + id + "\t("+pt(state.duration())+")");
+				System.out.println(kind.name() + "\t" + String.format("%1$14s", action.name())  + "\t" + id + "\t("+pt(state.duration())+")");
 			this.totalTimes[action.ordinal()] += state.duration();
-			handle_action(state);
+			handle_state(state);
 			state = state.pop();
 		}
 				
 	}
 	
-	public void start_CheckTemplates(String id, String comment) {
-		this.handle_startstop(Kind.Start, Action.CheckTemplates, null, id, comment);
+	public void start_CheckTemplates(String id, String arg) {
+		this.handle_startstop(Kind.Start, Action.CheckTemplates, null, id, arg);
 	}
 	
-	public void stop_CheckTemplates(String id, String comment) {
-		this.handle_startstop(Kind.Stop, Action.CheckTemplates, null, id, comment);
+	public void stop_CheckTemplates(String id, String arg) {
+		this.handle_startstop(Kind.Stop, Action.CheckTemplates, null, id, arg);
 	}
 	
-	public void start_CheckTemplate(String id, String comment) {
-		this.handle_startstop(Kind.Start, Action.CheckTemplate, null, id, comment);
+	public void start_CheckTemplate(String id, String arg) {
+		this.handle_startstop(Kind.Start, Action.CheckTemplate, null, id, arg);
 	}
 	
-	public void stop_CheckTemplate(String id, String comment) {
-		this.handle_startstop(Kind.Stop, Action.CheckTemplate, null, id, comment);
+	public void stop_CheckTemplate(String id, String arg) {
+		this.handle_startstop(Kind.Stop, Action.CheckTemplate, null, id, arg);
 	}
 	
-	public void start_Precondition(String id, String comment) {
-		this.handle_startstop(Kind.Start, Action.Precondition, null, id, comment);
+	public void start_Precondition(String id, String arg) {
+		this.handle_startstop(Kind.Start, Action.Precondition, null, id, arg);
 	}
 	
-	public void stop_Precondition(String id, String comment) {
-		this.handle_startstop(Kind.Stop, Action.Precondition, null, id, comment);
+	public void stop_Precondition(String id, String arg) {
+		this.handle_startstop(Kind.Stop, Action.Precondition, null, id, arg);
 	}
 	
-	public void start_Effect(String id, String comment) {
-		this.handle_startstop(Kind.Start, Action.Effect, null, id, comment);
+	public void start_Effect(String id, String arg) {
+		this.handle_startstop(Kind.Start, Action.Effect, null, id, arg);
 	}
 	
-	public void stop_Effect(String id, String comment) {
-		this.handle_startstop(Kind.Stop, Action.Effect, null, id, comment);
+	public void stop_Effect(String id, String arg) {
+		this.handle_startstop(Kind.Stop, Action.Effect, null, id, arg);
 	}
 	
-	public void start_JavascriptExec(String id, String comment) {
-		this.handle_startstop(Kind.Start, Action.JavascriptExec, null, id, comment);
+	public void start_JavascriptExec(String id, String arg) {
+		this.handle_startstop(Kind.Start, Action.JavascriptExec, null, id, arg);
 	}
 	
-	public void stop_JavascriptExec(String id, String comment) {
-		this.handle_startstop(Kind.Stop, Action.JavascriptExec, null, id, comment);
+	public void stop_JavascriptExec(String id, String arg) {
+		this.handle_startstop(Kind.Stop, Action.JavascriptExec, null, id, arg);
 	}
 	
-	public void start_JavaExec(String id, String comment) {
-		this.handle_startstop(Kind.Start, Action.JavaExec, null, id, comment);
+	public void start_JavaExec(String id, String arg) {
+		this.handle_startstop(Kind.Start, Action.JavaExec, null, id, arg);
 	}
 	
-	public void stop_JavaExec(String id, String comment) {
-		this.handle_startstop(Kind.Stop, Action.JavaExec, null, id, comment);
+	public void stop_JavaExec(String id, String arg) {
+		this.handle_startstop(Kind.Stop, Action.JavaExec, null, id, arg);
 	}
 
 	public static final String pt(long t) {
