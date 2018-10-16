@@ -113,7 +113,12 @@ public class Template {
 	public static Effect handle_effect(Template template, Is is, SimpleElement ee) throws FlipperException {
 		Effect result = null;
 		
-		String id = template.id+":"+template.name;
+		String id;
+		
+		if ( template == null )
+			id = "DB-TEMPLATE";
+		else
+			id = template.id+":"+template.name;
 		String effect_weight = ee.attr.get("weight");
 	    if (ee.tag.equals("assign")) {
 			result = new AssignEffect(id, ee.attr.get("is"), ee.characters.toString());
