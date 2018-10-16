@@ -1,8 +1,11 @@
 package hmi.flipper2.launcher;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import hmi.flipper2.Config;
+import hmi.flipper2.debugger.FlipperDebugger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,9 +90,15 @@ public class FlipperLauncherThread extends Thread {
 		try {
 			if (!host.equals("") && !database.equals("") && !role.equals("")) {
 				this.db = new Database("jdbc:postgresql://"+host+"/"+database, role, password);
+				if(db.getConnection().isValid(0)){
+                    logger.debug("Database connected to: " +host+"/"+database);
+                }
 				db.clearAll();
 			}
 			tc = TemplateController.create(name, "", db, jslibs);
+			if(Config.debugging){
+			    tc.setDebugger(new FlipperDebugger(tc));
+            }
 			for (String templatePath : templates) {
 				String resourcePath = tc.resourcePath(templatePath);
 				tc.addTemplateFile(resourcePath);
@@ -100,14 +109,18 @@ public class FlipperLauncherThread extends Thread {
 					watcher.start();
 				}
 			}
-			
+			if(db != null){
+			    db.commit();
+            }
 			LogIS(0);
 		} catch (FlipperException e) {
 			e.extra += "\nFlipperLauncherThread: setup failed";
 			stop = true;
 			FlipperException.handle(e);
-		}
-	}
+		} catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 	
 	public void run() {
 		int steps = 0;
