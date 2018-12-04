@@ -120,10 +120,10 @@ public class JavaEffect extends Effect {
 	public Object doIt(Is is) throws FlipperException {
 		Object method_args[] = this.arguments.objectArray();
 		if ( Config.debugging && is.tc.dbg != null )
-			is.tc.dbg.start_JavaExec(id, this.toString());
+			is.tc.dbg.start_JavaExec(id(), this.toString());
 		Object return_obj =  executeCall(method_args);
 		if ( Config.debugging && is.tc.dbg != null )
-			is.tc.dbg.stop_JavaExec(id, null);
+			is.tc.dbg.stop_JavaExec(id(), null);
 		if ( is_assign != null ) {
 			if (this.vt_type == ValueTransferType.TYPE_OBJECT ) {
 				is.assignObject2Js(is_assign, return_obj);

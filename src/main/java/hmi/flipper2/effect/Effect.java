@@ -1,21 +1,20 @@
 package hmi.flipper2.effect;
 
 import hmi.flipper2.FlipperException;
+import hmi.flipper2.FlipperObject;
 import hmi.flipper2.Is;
 
-public abstract class Effect {
+public abstract class Effect extends FlipperObject {
 
 	public String js_weight = null;
 	public double computed_weight = -1;
 	
 	private double rr_from, rr_to; // random range bounds
 	
-	public String id;
-	
 	public abstract Object doIt(Is is) throws FlipperException;
 	
 	public Effect(String id) {	
-		this.id = id;
+		super(id);
 	}
 	
 	public void setWeight(String js_weight) {

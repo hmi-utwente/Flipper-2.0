@@ -15,7 +15,7 @@
     <template id="1" name="Template A" conditional="false">
     
        <initeffects>
- 			<assign is="is.counter.autoinit"> "AUTOINIT" </assign>
+ 			<assign id="autoinit-1" is="is.counter.autoinit"> "AUTOINIT" </assign>
 <!--  			<system command="debugger" arg="off"/> -->
  	  </initeffects>
 		
@@ -27,15 +27,15 @@
 				}
 			]]></javascript>
 			
-          	<condition> chkBound(is.counter.value, 5) </condition>
+          	<condition id="chkBound-1"> chkBound(is.counter.value, 5) </condition>
           	
-			<function class="hmi.flipper2.example.Dynamic" name="alwaysTrue"> </function>
+			<function id="alwaysTrue-1" class="hmi.flipper2.example.Dynamic" name="alwaysTrue"> </function>
           	
       </preconditions>
 
        <effects>
       
-          <assign is="is.counter.value"> addOne( is.counter.value ) </assign> 
+          <assign id="counter++" is="is.counter.value"> addOne( is.counter.value ) </assign> 
      
      	  <function class="hmi.flipper2.example.Dynamic" name="f">
               <arguments>

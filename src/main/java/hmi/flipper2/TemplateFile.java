@@ -13,10 +13,9 @@ import hmi.flipper2.postgres.Database;
 import hmi.flipper2.sax.SimpleElement;
 import hmi.flipper2.sax.SimpleSAXParser;
 
-public class TemplateFile {
+public class TemplateFile extends FlipperObject {
 	
 	public int    tfid = -1;
-	public String name;
 	public long sync_is;
 	public String path;
 	public String xml_str;
@@ -24,8 +23,8 @@ public class TemplateFile {
 	private SimpleElement xml_root;
 	
 	public TemplateFile(TemplateController tc, String path, String xml_str, String db_is_value, long sync_is) throws FlipperException  {
+		super((new File(path)).getName());
 		this.tc = tc;
-		this.name = (new File(path)).getName();
 		this.path = path;
 		this.xml_str = xml_str;
 		this.sync_is = sync_is;

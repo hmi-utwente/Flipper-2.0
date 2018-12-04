@@ -53,10 +53,10 @@ public class EffectList extends ArrayList<Effect> {
 			for (Effect eff : this) {
 				if (eff.inRandomRange(rand)) {
 					if ( Config.debugging && is.tc.dbg != null )
-						is.tc.dbg.start_Effect(eff.id, eff.toString());	
+						is.tc.dbg.start_Effect(eff.id(), eff.toString());	
 					eff.doIt(is);
 					if ( Config.debugging && is.tc.dbg != null )
-						is.tc.dbg.stop_Effect(eff.id,null);	
+						is.tc.dbg.stop_Effect(eff.id(),null);	
 					return;
 				}
 			}
@@ -64,10 +64,10 @@ public class EffectList extends ArrayList<Effect> {
 		} else {
 			for (Effect eff : this) {
 				if ( Config.debugging && is.tc.dbg != null )
-					is.tc.dbg.start_Effect(eff.id, eff.toString());	
+					is.tc.dbg.start_Effect(eff.id(), eff.toString());	
 				eff.doIt(is);
 				if ( Config.debugging && is.tc.dbg != null )
-					is.tc.dbg.stop_Effect(eff.id,null);	
+					is.tc.dbg.stop_Effect(eff.id(),null);	
 			}
 		}
 	}

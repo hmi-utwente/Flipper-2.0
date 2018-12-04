@@ -299,7 +299,7 @@ public class TemplateController {
 			}
 			for (Template template : filterTemplates(this.base_templates, templateFilter) ) {
 					if ( Config.debugging && this.dbg != null )
-						this.dbg.start_CheckTemplate(template.name, null);
+						this.dbg.start_CheckTemplate(template.id(), null);
 					changed =  checkPreconditions(template, Behaviour.IMMEDIATE_EFFECT) || changed;
 					while ( this.conditional_stack != null ) {
 						Template toCheck = this.conditional_stack;
@@ -307,7 +307,7 @@ public class TemplateController {
 						checkPreconditions(toCheck, Behaviour.IMMEDIATE_EFFECT);
 					}
 					if ( Config.debugging && this.dbg != null )
-						this.dbg.stop_CheckTemplate(template.name, null);
+						this.dbg.stop_CheckTemplate(template.id(), null);
 			}
 			if ( ! Behaviour.IMMEDIATE_EFFECT ) {
 				for (Template template : this.all_templates) {
@@ -338,7 +338,7 @@ public class TemplateController {
 			ArrayList<Template> res = new ArrayList<Template>();
 			Pattern templatePattern = Pattern.compile(regexpr);
 			for (Template t : list )
-				if ( templatePattern.matcher(t.id).matches() ) 
+				if ( templatePattern.matcher(t.id()).matches() ) 
 					res.add(t);
 			return res;
 		}
@@ -349,12 +349,12 @@ public class TemplateController {
 	}
 	
 	private boolean checkPreconditions(Template t, boolean executeEffectImmediate) throws FlipperException {
-		this.registerCurrentTemplate(this.name, t.id, t.name);
+		this.registerCurrentTemplate(this.name, t.id(), t.id());
 		return t.checkPreconditions(is, executeEffectImmediate);
 	}
 	
 	private void executeEffects(Template t) throws FlipperException {
-		this.registerCurrentTemplate(this.name, t.id, t.name);
+		this.registerCurrentTemplate(this.name, t.id(), t.id());
 		t.executeSelectedEffects(is);
 	}
 	

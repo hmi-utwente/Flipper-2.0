@@ -37,10 +37,10 @@ public class ConditionList extends ArrayList<Condition> {
 		boolean res;
 		
 		if ( Config.debugging && is.tc.dbg != null )
-			is.tc.dbg.start_Precondition(c.id, c.toString());
+			is.tc.dbg.start_Precondition(c.id(), c.toString());
 		res = c.checkIt(is);
 		if ( Config.debugging && is.tc.dbg != null )
-			is.tc.dbg.stop_Precondition(c.id, res+"");
+			is.tc.dbg.stop_Precondition(c.id(), res+"");
 		return res;
 	}
 	

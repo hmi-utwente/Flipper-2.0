@@ -151,7 +151,7 @@ public class Database {
 			String insertTableSQL = "INSERT INTO flipper_tf" + "(cid,name,path,xml,json_is,created) VALUES" + "(?,?,?,?,to_json(?::json),?) RETURNING tfid";
 			PreparedStatement preparedStatement = conn.prepareStatement(insertTableSQL);
 			preparedStatement.setInt(1, tc.cid);
-			preparedStatement.setString(2, tf.name);
+			preparedStatement.setString(2, tf.id());
 			preparedStatement.setString(3, tf.path);
 			preparedStatement.setString(4, tf.xml_str);
 			preparedStatement.setString(5, tf.is_json_value);

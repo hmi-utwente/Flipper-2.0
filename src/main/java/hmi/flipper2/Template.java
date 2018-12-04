@@ -22,21 +22,20 @@ import hmi.flipper2.value.IsJavaValue;
 import hmi.flipper2.value.JavaValueList;
 import hmi.flipper2.value.PersistentJavaValue;
 
-public class Template {
+public class Template extends FlipperObject {
 
 	public TemplateFile tf;
 	
-	public String id;
-	public String name;
+	public String priv_name;
 
 	public Template(TemplateFile tf, SimpleElement el) throws FlipperException {
+		super(el.attr.get("id"));
 		this.tf = tf;
-		this.id = el.attr.get("id");
-		this.name = el.attr.get("name");
+		this.priv_name = el.attr.get("name");
 		String conditionalString = el.attr.get("conditional");
 		if ( conditionalString != null && conditionalString.toLowerCase().equals("true"))
 			this.conditional = true;
-		tf.tc.registerCurrentTemplate(tf.name, this.id, this.name);
+		tf.tc.registerCurrentTemplate(tf.id(), this.id(), this.priv_name);
 		for (SimpleElement coe : el.children) {
 			if (coe.tag.equals("preconditions")) {
 				handle_preconditions(coe);
@@ -79,9 +78,9 @@ public class Template {
 		preconditions = new ConditionList(el.attr.get("mode"));
 		for (SimpleElement pc : el.children) {
 			if (pc.tag.equals("condition")) {
-				preconditions.add(new JsCondition((this.id+":"+this.name), pc.characters.toString()));
+				preconditions.add(new JsCondition(pc.attr.get("id"), pc.characters.toString()));
 			} else if (pc.tag.equals("function") || pc.tag.equals("method")) {
-				preconditions.add(new JavaCondition((this.id+":"+this.name), (JavaEffect)handle_effect(this, tf.tc.is, pc)));
+				preconditions.add(new JavaCondition(pc.attr.get("id"), (JavaEffect)handle_effect(this, tf.tc.is, pc)));
 			} else if (pc.tag.equals("javascript")) {
 				this.tf.tc.is.execute(pc.characters.toString());
 			} else
@@ -118,7 +117,8 @@ public class Template {
 		if ( template == null )
 			id = "DB-TEMPLATE";
 		else
-			id = template.id+":"+template.name;
+			// id = template.id()+":"+template.name;
+			id = ee.attr.get("id");
 		String effect_weight = ee.attr.get("weight");
 	    if (ee.tag.equals("assign")) {
 			result = new AssignEffect(id, ee.attr.get("is"), ee.characters.toString());
@@ -189,11 +189,11 @@ public class Template {
 				if ( sys.equals("template_id")) {	
 					if ( template == null )
 						throw new FlipperException("ERROR: use "+sys+" system variable outside Template");
-					jvl.add( new ConstantJavaValue("String",template.id));
+					jvl.add( new ConstantJavaValue("String",template.id()));
 				} else if ( sys.equals("template_name")) {
 					if ( template == null )
 						throw new FlipperException("ERROR: use "+sys+" system variable outside Template");
-					jvl.add( new ConstantJavaValue("String",template.name));
+					jvl.add( new ConstantJavaValue("String",template.id()));
 				} else 
 					throw new FlipperException("ERROR: bad system value: "+sys);
 			} else if (  val.attr.get("is") != null ) {
