@@ -15,6 +15,7 @@ import hmi.flipper2.effect.JavaEffect;
 import hmi.flipper2.effect.MethodJavaEffect;
 import hmi.flipper2.effect.SystemEffect;
 import hmi.flipper2.effect.TemplateEffect;
+import hmi.flipper2.javascript.JsExpression;
 import hmi.flipper2.sax.SimpleElement;
 import hmi.flipper2.value.ConstantJavaValue;
 import hmi.flipper2.value.DbJavaValue;
@@ -78,7 +79,7 @@ public class Template extends FlipperObject {
 		preconditions = new ConditionList(el.attr.get("mode"));
 		for (SimpleElement pc : el.children) {
 			if (pc.tag.equals("condition")) {
-				preconditions.add(new JsCondition(pc.attr.get("id"), pc.characters.toString()));
+				preconditions.add(new JsCondition(pc.attr.get("id"), new JsExpression(tf.tc.is,pc.characters.toString())));
 			} else if (pc.tag.equals("function") || pc.tag.equals("method")) {
 				preconditions.add(new JavaCondition(pc.attr.get("id"), (JavaEffect)handle_effect(this, tf.tc.is, pc)));
 			} else if (pc.tag.equals("javascript")) {

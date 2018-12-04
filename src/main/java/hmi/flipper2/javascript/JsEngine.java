@@ -1,5 +1,6 @@
 package hmi.flipper2.javascript;
 
+import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
@@ -11,7 +12,8 @@ import hmi.flipper2.FlipperException;
 public class JsEngine {
 
 	private ScriptEngineManager mgr;
-	private ScriptEngine engine;
+	public  ScriptEngine engine;
+	public  Invocable invocable;
 	public  TemplateController tc;
 	
 	public JsEngine(TemplateController tc) throws FlipperException {
@@ -21,6 +23,7 @@ public class JsEngine {
 	protected void js_init(TemplateController tc) throws FlipperException {
 		this.mgr = new ScriptEngineManager();
 		this.engine = mgr.getEngineByName("nashorn");
+		this.invocable = (Invocable)engine;
 		this.tc = tc;
 	}
 
@@ -53,17 +56,6 @@ public class JsEngine {
 				this.tc.dbg.stop_JavascriptExec("js","ERROR:"+sb.toString());
 			throw new FlipperException(e, sb.toString());
 		}
-	}
-	
-	public boolean condition(String js_expr) throws FlipperException {
-			Object retval = eval(js_expr);
-			if (retval != null) {
-				try {
-					return ((Boolean) retval).booleanValue();
-				} catch (ClassCastException e) {
-				}				
-			}
-			throw new FlipperException("Condition not Boolean: " + js_expr);
 	}
 	
 	public double numericExpression(String js_expr) throws FlipperException {
@@ -155,4 +147,22 @@ public class JsEngine {
 //		}
 
 //	}
+	
+	public static void main(String[] args) {
+		try {
+			System.out.println("XXXXX");
+			ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
+			engine.eval(
+					"var sayHello = function() { print('Hello, ' + 'Piet' + '!'); return 'hello from javascript'; };");
+
+			Invocable invocable = (Invocable) engine;
+
+			Object result = invocable.invokeFunction("sayHello");
+			System.out.println(result);
+			System.out.println(result.getClass());
+
+		} catch (Exception e) {
+			System.out.println("EXCEPTION: " + e);
+		}
+	}
 }
