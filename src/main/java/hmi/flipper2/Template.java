@@ -8,6 +8,7 @@ import hmi.flipper2.conditions.JavaCondition;
 import hmi.flipper2.conditions.JsCondition;
 import hmi.flipper2.effect.AssignEffect;
 import hmi.flipper2.effect.BehaviourJavaEffect;
+import hmi.flipper2.effect.DerefAssignEffect;
 import hmi.flipper2.effect.Effect;
 import hmi.flipper2.effect.EffectList;
 import hmi.flipper2.effect.FunctionJavaEffect;
@@ -79,7 +80,7 @@ public class Template extends FlipperObject {
 		preconditions = new ConditionList(el.attr.get("mode"));
 		for (SimpleElement pc : el.children) {
 			if (pc.tag.equals("condition")) {
-				preconditions.add(new JsCondition(pc.attr.get("id"), new JsExpression(tf.tc.is,pc.characters.toString())));
+				preconditions.add(new JsCondition(pc.attr.get("id"), new JsExpression(tf.tc.is,pc.characters.toString(),true)));
 			} else if (pc.tag.equals("function") || pc.tag.equals("method")) {
 				preconditions.add(new JavaCondition(pc.attr.get("id"), (JavaEffect)handle_effect(this, tf.tc.is, pc)));
 			} else if (pc.tag.equals("javascript")) {
@@ -122,7 +123,11 @@ public class Template extends FlipperObject {
 			id = ee.attr.get("id");
 		String effect_weight = ee.attr.get("weight");
 	    if (ee.tag.equals("assign")) {
-			result = new AssignEffect(id, ee.attr.get("is"), ee.characters.toString());
+	    	String is_name = ee.characters.toString();
+	    	if ( is_name.startsWith("*"))
+	    		result = new DerefAssignEffect(id, ee.attr.get("is"), is_name);
+	    	else
+	    		result = new AssignEffect(id, ee.attr.get("is"), is_name);
 		} else if (ee.tag.equals("db")) {
 			throw new RuntimeException("INCOMPLETE: DB ELEMENT: " + ee);
 		} else if (ee.tag.equals("checktemplates")) {

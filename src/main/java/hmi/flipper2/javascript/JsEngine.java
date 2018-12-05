@@ -148,21 +148,21 @@ public class JsEngine {
 
 //	}
 	
-	public static void main(String[] args) {
-		try {
-			System.out.println("XXXXX");
-			ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
-			engine.eval(
-					"var sayHello = function() { print('Hello, ' + 'Piet' + '!'); return 'hello from javascript'; };");
-
-			Invocable invocable = (Invocable) engine;
-
-			Object result = invocable.invokeFunction("sayHello");
-			System.out.println(result);
-			System.out.println(result.getClass());
-
-		} catch (Exception e) {
-			System.out.println("EXCEPTION: " + e);
-		}
-	}
+//	public static void main(String[] args) {
+//		try {
+//			System.out.println("XXXXX");
+//			ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
+//			engine.eval(
+//					"var sayHello = function() { print('Hello, ' + 'Piet' + '!'); return 'hello from javascript'; };");
+//
+//			Invocable invocable = (Invocable) engine;
+//
+//			Object result = invocable.invokeFunction("sayHello");
+//			System.out.println(result);
+//			System.out.println(result.getClass());
+//
+//		} catch (Exception e) {
+//			System.out.println("EXCEPTION: " + e);
+//		}
+//	}
 }

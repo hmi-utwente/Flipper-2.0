@@ -24,7 +24,6 @@ public abstract class Effect extends FlipperObject {
 	public void setRandomRange(double rr_from, double rr_to) {
 		this.rr_from = rr_from;
 		this.rr_to = rr_to;
-		// System.out.println("SETRANDOMRANGE: " + rr_from + " - " + rr_to);
 	}
 	
 	public boolean inRandomRange(double d) {

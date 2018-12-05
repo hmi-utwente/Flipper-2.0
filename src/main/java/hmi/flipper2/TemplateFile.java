@@ -42,6 +42,8 @@ public class TemplateFile extends FlipperObject {
 			handle_database(el);
 		} else if (el.tag.equals("javascript")) {
 			this.tc.is.execute(el.characters.toString());
+		} else if (el.tag.equals("dataflow")) {
+			// this.tf.tc.is.execute(coe.characters.toString());
 		} else if (el.tag.equals("template")) {
 			handle_template(el);
 		} else

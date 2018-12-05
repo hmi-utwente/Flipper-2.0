@@ -6,6 +6,7 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import hmi.flipper2.javascript.JsEngine;
+import hmi.flipper2.javascript.JsExpression;
 import hmi.flipper2.postgres.Database;
 
 public class Is extends JsEngine {
@@ -78,13 +79,17 @@ public class Is extends JsEngine {
 			tf.is_updated = true;
 	}
 	
-	public void assignJavascript(String is_var, String js_expr) throws FlipperException {
+	public void assignJsExpression(String is_var, JsExpression js_expr) throws FlipperException {
+		registerUpdate(is_var);
+		js_expr.eval_void();
+	}
+	
+	public void assignDerefJavascript(String is_var, String js_expr) throws FlipperException {
 		//do we need to dereference the variable, i.e., replace the path with the value of that state variable?
-        if (is_var.startsWith("*"))
-        {
-            is_var=getIs(is_var.substring(1));
-            is_var=is_var.substring(1,is_var.length()-1);
-        }
+		if (!is_var.startsWith("*"))
+			throw new RuntimeException("UNEXPECTED");
+		is_var = getIs(is_var.substring(1));
+		is_var = is_var.substring(1, is_var.length() - 1);
 		registerUpdate(is_var);
 		execute(is_var + " = " + js_expr);
 	}

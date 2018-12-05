@@ -1,5 +1,7 @@
 <behaviourtemplates>
         
+    <dataflow group="" in="" out=""/>
+    
     <is name="counter">
         {
             "value" : 1

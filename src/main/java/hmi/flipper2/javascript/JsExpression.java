@@ -13,14 +13,14 @@ public class JsExpression {
 	public String expr;
 	public  TemplateController tc;
 	
-	public JsExpression(JsEngine jse, String expr) throws FlipperException {
+	public JsExpression(JsEngine jse, String expr, boolean return_value) throws FlipperException {
 		this.jse = jse;
 		this.expr = expr;
 		//
-		if ( Config.JS_ENCAPSULATE_EXPR ) {
-			this.fid = "_f"+fcnt++;
-			String fdef = "var "+this.fid+" = function() { return "+expr+"; };";
-			jse.eval(fdef);
+		if (Config.JS_ENCAPSULATE_EXPR) {
+			this.fid = "_f" + fcnt++;
+			String fundef = "var " + this.fid + " = function() { " + (return_value ? "return " : "") + expr + "; };";
+			jse.eval(fundef);
 		}
 	}
 	
@@ -34,6 +34,10 @@ public class JsExpression {
 		} else {
 			return jse.eval(this.expr);
 		}
+	}
+	
+	public void eval_void() throws FlipperException {
+		_eval();
 	}
 	
 	public boolean eval_boolean() throws FlipperException {
