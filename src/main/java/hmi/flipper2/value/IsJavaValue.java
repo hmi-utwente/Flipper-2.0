@@ -1,8 +1,12 @@
 package hmi.flipper2.value;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import hmi.flipper2.FlipperException;
 import hmi.flipper2.Is;
 import hmi.flipper2.Is.ValueTransferType;
+import hmi.flipper2.dataflow.DataFlow;
 
 public class IsJavaValue extends JavaValue {
 
@@ -39,5 +43,12 @@ public class IsJavaValue extends JavaValue {
 			return this.cl;
 		} else
 			throw new RuntimeException("Should define class for is="+path+", is_type: Object. Dynamic calls implemented in future");
+	}
+	
+	public Set<String> flowOut() {
+		HashSet<String> res = new HashSet<String>();
+		res.add(this.path);
+		return res;
+
 	}
 }

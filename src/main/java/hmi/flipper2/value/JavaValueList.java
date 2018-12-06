@@ -1,10 +1,13 @@
 package hmi.flipper2.value;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import hmi.flipper2.FlipperException;
+import hmi.flipper2.dataflow.DataFlow;
+import hmi.flipper2.effect.Effect;
 
-public class JavaValueList extends ArrayList<JavaValue> {
+public class JavaValueList extends ArrayList<JavaValue> implements DataFlow {
 
 	/**
 	 * 
@@ -44,4 +47,17 @@ public class JavaValueList extends ArrayList<JavaValue> {
 		return "[" + sb + "]";
 	}
 	
+	public Set<String> flowIn() {
+		Set<String> res = DataFlow.EMPTY;
+		for(JavaValue c: this)
+			res = DataFlow.union(res, c.flowIn());
+		return res;
+	}
+	
+	public Set<String> flowOut() {
+		Set<String> res = DataFlow.EMPTY;
+		for(JavaValue c: this)
+			res = DataFlow.union(res, c.flowOut());
+		return res;
+	}
 }

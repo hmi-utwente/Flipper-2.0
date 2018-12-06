@@ -1,11 +1,14 @@
 package hmi.flipper2;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import hmi.flipper2.conditions.ConditionList;
 import hmi.flipper2.conditions.JavaCondition;
 import hmi.flipper2.conditions.JsCondition;
+import hmi.flipper2.dataflow.DataFlow;
 import hmi.flipper2.effect.AssignEffect;
 import hmi.flipper2.effect.BehaviourJavaEffect;
 import hmi.flipper2.effect.DerefAssignEffect;
@@ -236,6 +239,32 @@ public class Template extends FlipperObject {
 	public void doInitializeEffects() throws FlipperException {
 		for(EffectList effects: listOfInitializeEffectList)
 			effects.doIt(this.tf.tc.is);		
+	}
+	
+	public Set<String> flowIn() {
+		// INCOMPLE, inline JS
+		Set<String> res = new HashSet<String>();
+		res.addAll(preconditions.flowIn());
+		for(EffectList l : listOfInitializeEffectList)
+			res.addAll(l.flowIn());
+		for(EffectList l : listOfEffectList)
+			res.addAll(l.flowIn());
+		this.dfin = res;
+		System.out.println("TEMPLATE-IN["+id()+"]="+dfin);
+		return res;
+	}
+	
+	public Set<String> flowOut() {
+		// INCOMPLE, inline JS
+		Set<String> res = new HashSet<String>();
+		res.addAll(preconditions.flowOut());
+		for (EffectList l : listOfInitializeEffectList)
+			res.addAll(l.flowOut());
+		for (EffectList l : listOfEffectList)
+			res.addAll(l.flowOut());
+		this.dfout = res;
+		System.out.println("TEMPLATE-OUT["+id()+"]="+dfout);
+		return res;
 	}
 	
 }

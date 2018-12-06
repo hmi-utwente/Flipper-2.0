@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import hmi.flipper2.dataflow.DataFlow;
 import hmi.flipper2.debugger.FlipperDebugger;
 import hmi.flipper2.effect.EffectList;
 import hmi.flipper2.postgres.Database;
@@ -412,6 +413,14 @@ public class TemplateController {
 		if ( url == null )
 			throw new FlipperException("Resource file: " + rpath + " not found");
                 return url.getPath().replaceFirst("^/(.:/)", "$1");
+	}
+	
+	public String analyze() {
+		for(TemplateFile tf: this.tf_list) {
+			tf.flowIn();
+			tf.flowOut();
+		}
+		return "INCOMPLETE";
 	}
 	
 }

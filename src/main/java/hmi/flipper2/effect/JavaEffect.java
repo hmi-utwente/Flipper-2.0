@@ -3,11 +3,14 @@ package hmi.flipper2.effect;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Set;
 
 import hmi.flipper2.Config;
 import hmi.flipper2.FlipperException;
 import hmi.flipper2.Is;
 import hmi.flipper2.Is.ValueTransferType;
+import hmi.flipper2.dataflow.DataFlow;
 import hmi.flipper2.Template;
 import hmi.flipper2.TemplateController;
 import hmi.flipper2.value.JavaValueList;
@@ -161,6 +164,19 @@ public class JavaEffect extends Effect {
 	
 	public String toString() {
 		return "JavaEffect["+"name="+this.callName+", className="+this.className+"]";
+	}
+	
+	public Set<String> flowIn() {
+		return this.arguments.flowIn();
+	}
+	
+	public Set<String> flowOut() {
+		if ( this.isAssign() ) {
+			HashSet<String> res = new HashSet<String>();
+			res.add(this.is_assign);
+			return res;
+		} else
+			return DataFlow.EMPTY;
 	}
 	
 }

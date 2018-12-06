@@ -1,8 +1,14 @@
 package hmi.flipper2;
 
-public class FlipperObject {
+import java.util.Set;
+
+import hmi.flipper2.dataflow.DataFlow;
+
+public abstract class FlipperObject implements DataFlow {
 	
 	private String id;
+	public  Set<String> dfin = null;
+	public  Set<String> dfout = null;
 	
 	private static int idCount = 100;
 	

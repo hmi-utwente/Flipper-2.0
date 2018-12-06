@@ -1,12 +1,14 @@
 package hmi.flipper2.conditions;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import hmi.flipper2.Config;
 import hmi.flipper2.FlipperException;
 import hmi.flipper2.Is;
+import hmi.flipper2.dataflow.DataFlow;
 
-public class ConditionList extends ArrayList<Condition> {
+public class ConditionList extends ArrayList<Condition> implements DataFlow {
 	
 	/**
 	 * 
@@ -56,6 +58,20 @@ public class ConditionList extends ArrayList<Condition> {
 					return mark(true);
 			return mark(false);
 		}
+	}
+	
+	public Set<String> flowIn() {
+		Set<String> res = DataFlow.EMPTY;
+		for(Condition c: this)
+			res = DataFlow.union(res, c.flowIn());
+		return res;
+	}
+	
+	public Set<String> flowOut() {
+		Set<String> res = DataFlow.EMPTY;
+		for(Condition c: this)
+			res = DataFlow.union(res, c.flowOut());
+		return res;
 	}
 	
 }

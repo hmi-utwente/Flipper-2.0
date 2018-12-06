@@ -2,9 +2,12 @@ package hmi.flipper2;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
+import hmi.flipper2.dataflow.DataFlow;
 import hmi.flipper2.effect.EffectList;
 import hmi.flipper2.effect.JavaEffect;
 import hmi.flipper2.javascript.JsStringValue;
@@ -35,15 +38,17 @@ public class TemplateFile extends FlipperObject {
 		activate(db_is_value);
 	}
 	
+	public List<String> db_init_js = new ArrayList<String>();
+	
 	private void handle_section(SimpleElement el) throws FlipperException {
 		if (el.tag.equals("is")) {
 			handle_is(el);
 		} else if (el.tag.equals("database")) {
 			handle_database(el);
 		} else if (el.tag.equals("javascript")) {
-			this.tc.is.execute(el.characters.toString());
-		} else if (el.tag.equals("dataflow")) {
-			// this.tf.tc.is.execute(coe.characters.toString());
+			String js = el.characters.toString();
+			this.db_init_js.add(js);
+			this.tc.is.execute(js);
 		} else if (el.tag.equals("template")) {
 			handle_template(el);
 		} else
@@ -132,5 +137,48 @@ public class TemplateFile extends FlipperObject {
 	
 	public JsValue isValue() {
 		return new JsStringValue("INCOMPLETE");
+	}
+	
+	public String toString() {
+		return "TemplateFile["+id()+"]";
+	}
+	
+	public Set<TemplateFile> dfin_tf = null;
+	public Set<TemplateFile> dfout_tf = null;
+	
+	private Set<TemplateFile> is_var2templatefile(Set<String> dfx) {
+		Set<TemplateFile> res = new HashSet<TemplateFile>();
+		for(String is_var : dfx) { 
+			TemplateFile tfdep = tc.is.tf_from_is_var(is_var);
+			if ( tfdep != null )
+				res.add(tfdep);	
+		}
+		return res;
+	}
+	
+	public Set<String> flowIn() {
+		Set<String> res = new HashSet<String>();
+		for(String js : this.db_init_js)
+			res.addAll(DataFlow.extractRefs(js));
+		res.addAll(this.db_init_java.flowIn());
+		res.addAll(this.db_cleanup_java.flowIn());
+		for(Template t : this.templates)
+			res.addAll(t.flowIn());
+		this.dfin = res;
+		this.dfin_tf = is_var2templatefile(res);
+		System.out.println("TF-IN["+id()+"]="+dfin_tf);
+		return res;
+	}
+	
+	public Set<String> flowOut() {
+		Set<String> res = new HashSet<String>();
+		res.addAll(this.db_init_java.flowOut());
+		res.addAll(this.db_cleanup_java.flowOut());
+		for(Template t : this.templates)
+			res.addAll(t.flowOut());
+		this.dfout = res;
+		this.dfout_tf = is_var2templatefile(res);
+		System.out.println("TF-OUT["+id()+"]="+dfout_tf);
+		return res;
 	}
 }

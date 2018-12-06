@@ -1,6 +1,12 @@
 package hmi.flipper2.javascript;
 
 import hmi.flipper2.TemplateController;
+import hmi.flipper2.TemplateFile;
+import hmi.flipper2.dataflow.DataFlow;
+
+import java.util.HashSet;
+import java.util.Set;
+
 import hmi.flipper2.Config;
 import hmi.flipper2.FlipperException;
 
@@ -10,7 +16,7 @@ public class JsExpression {
 	
 	private String fid = null;
 	private JsEngine jse;
-	public String expr;
+	public  String expr;
 	public  TemplateController tc;
 	
 	public JsExpression(JsEngine jse, String expr, boolean return_value) throws FlipperException {
@@ -49,6 +55,10 @@ public class JsExpression {
 			}				
 		}
 		throw new FlipperException("Condition not Boolean: " + this.expr);
+	}
+	
+	public Set<String> extractRefs() {
+		return DataFlow.extractRefs(this.expr);
 	}
 	
 }

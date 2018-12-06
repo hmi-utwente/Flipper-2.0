@@ -1,6 +1,4 @@
 <behaviourtemplates>
-        
-    <dataflow group="" in="" out=""/>
     
     <is name="counter">
         {
@@ -12,6 +10,7 @@
 			function addOne(i) {
     			return i + 1;
 			}
+			
 	</javascript>
 	
     <template id="1" name="Template A" conditional="false">

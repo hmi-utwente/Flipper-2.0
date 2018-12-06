@@ -2,10 +2,12 @@ package hmi.flipper2.value;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import hmi.flipper2.FlipperException;
+import hmi.flipper2.dataflow.DataFlow;
 
-public abstract class JavaValue {
+public abstract class JavaValue implements DataFlow {
 
 		public abstract Object getObject() throws FlipperException;
 		
@@ -31,6 +33,14 @@ public abstract class JavaValue {
 				} catch (ClassNotFoundException e) {
 					throw new FlipperException(e);
 				}
+		}
+		
+		public Set<String> flowIn() {
+			return DataFlow.EMPTY;
+		}
+		
+		public Set<String> flowOut() {
+			return DataFlow.EMPTY;
 		}
 		
 }

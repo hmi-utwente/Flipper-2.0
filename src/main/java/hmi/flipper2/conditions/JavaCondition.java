@@ -1,5 +1,7 @@
 package hmi.flipper2.conditions;
 
+import java.util.Set;
+
 import hmi.flipper2.Config;
 import hmi.flipper2.FlipperException;
 import hmi.flipper2.Is;
@@ -26,6 +28,10 @@ public class JavaCondition extends Condition {
 			throw new FlipperException("JavaCondition: condition must be boolean: "+booleanEffect.toString());
 		}
 		
+	}
+	
+	public Set<String> flowIn() {
+		return booleanEffect.flowIn();
 	}
 
 }

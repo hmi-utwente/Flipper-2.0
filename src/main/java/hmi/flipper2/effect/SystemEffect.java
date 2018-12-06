@@ -1,8 +1,11 @@
 package hmi.flipper2.effect;
 
+import java.util.Set;
+
 import hmi.flipper2.Config;
 import hmi.flipper2.FlipperException;
 import hmi.flipper2.Is;
+import hmi.flipper2.dataflow.DataFlow;
 
 public class SystemEffect extends Effect {
 
@@ -29,6 +32,14 @@ public class SystemEffect extends Effect {
 		} else
 			throw new RuntimeException("INCOMPLETE");
 		return null;
+	}
+	
+	public Set<String> flowIn() {
+		return DataFlow.EMPTY;
+	}
+	
+	public Set<String> flowOut() {
+		return DataFlow.EMPTY;
 	}
 	
 }

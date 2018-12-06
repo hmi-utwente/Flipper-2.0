@@ -1,12 +1,15 @@
 package hmi.flipper2.effect;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import hmi.flipper2.Config;
 import hmi.flipper2.FlipperException;
 import hmi.flipper2.Is;
+import hmi.flipper2.conditions.Condition;
+import hmi.flipper2.dataflow.DataFlow;
 
-public class EffectList extends ArrayList<Effect> {
+public class EffectList extends ArrayList<Effect> implements DataFlow {
 	
 	/**
 	 * 
@@ -71,5 +74,20 @@ public class EffectList extends ArrayList<Effect> {
 			}
 		}
 	}
+	
+	public Set<String> flowIn() {
+		Set<String> res = DataFlow.EMPTY;
+		for(Effect c: this)
+			res = DataFlow.union(res, c.flowIn());
+		return res;
+	}
+	
+	public Set<String> flowOut() {
+		Set<String> res = DataFlow.EMPTY;
+		for(Effect c: this)
+			res = DataFlow.union(res, c.flowOut());
+		return res;
+	}
+	
 }
 

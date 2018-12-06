@@ -70,6 +70,15 @@ public class Is extends JsEngine {
 		return steps[1];
 	}
 	
+	public TemplateFile tf_from_is_var(String is_var) {
+		try {
+			String is_tfid = extract_is(is_var);
+			return is_tf_table.get(is_tfid);
+		} catch (FlipperException e) {
+			return null;
+		}
+	}
+	
 	private void registerUpdate(String is_var) throws FlipperException {
 		String is_tfid = extract_is(is_var);
 		TemplateFile tf = is_tf_table.get(is_tfid);

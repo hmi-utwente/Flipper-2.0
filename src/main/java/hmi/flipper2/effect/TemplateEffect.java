@@ -1,7 +1,10 @@
 package hmi.flipper2.effect;
 
+import java.util.Set;
+
 import hmi.flipper2.FlipperException;
 import hmi.flipper2.Is;
+import hmi.flipper2.dataflow.DataFlow;
 
 public class TemplateEffect extends Effect {
 
@@ -28,6 +31,14 @@ public class TemplateEffect extends Effect {
 		}
 		is.tc.checkConditionalTemplates(this.regexpr);
 		return null;
+	}
+	
+	public Set<String> flowIn() {
+		return DataFlow.EMPTY;
+	}
+	
+	public Set<String> flowOut() {
+		return DataFlow.EMPTY;
 	}
 
 }

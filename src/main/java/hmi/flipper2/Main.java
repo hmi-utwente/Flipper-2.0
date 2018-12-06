@@ -31,6 +31,7 @@ public class Main {
 			// tc.addTemplateFile( tc.resourcePath("example/Underscore.xml") );
 			// tc.addTemplateFile( tc.resourcePath("example/ChoiceExample.xml") );
 			// tc.addTemplateFile( tc.resourcePath("example/PersonDbExample.xml") );
+			// tc.analyze();
 			if ( db != null )
 				db.commit(); // addTemplatefile does not automatically commit()
 			
