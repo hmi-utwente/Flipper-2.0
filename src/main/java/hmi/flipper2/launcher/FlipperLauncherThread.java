@@ -1,17 +1,16 @@
 package hmi.flipper2.launcher;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Properties;
-
 import hmi.flipper2.Config;
+import hmi.flipper2.FlipperException;
+import hmi.flipper2.TemplateController;
 import hmi.flipper2.debugger.FlipperDebugger;
+import hmi.flipper2.postgres.Database;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import hmi.flipper2.FlipperException;
-import hmi.flipper2.TemplateController;
-import hmi.flipper2.postgres.Database;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Properties;
 
 public class FlipperLauncherThread extends Thread {
 	
@@ -37,6 +36,7 @@ public class FlipperLauncherThread extends Thread {
 	private String database;
 	private String role;
 	private String password;
+	private boolean analyze;
 
 	private ArrayList<FlipperTemplateWatcher> watchedTemplates;
 	
@@ -80,6 +80,8 @@ public class FlipperLauncherThread extends Thread {
 		this.database = ps.getProperty("database", "");
 		this.role = ps.getProperty("role", "");
 		this.password = ps.getProperty("password", "");
+		// Analyze
+		this.analyze = Boolean.parseBoolean(ps.getProperty("analyze","False"));
 		
 		try {
 			this.autoReloadTemplates = AutoReloadBehavior.valueOf(ps.getProperty("autoReloadTemplates", "NONE"));
@@ -91,7 +93,7 @@ public class FlipperLauncherThread extends Thread {
 			if (!host.equals("") && !database.equals("") && !role.equals("")) {
 				this.db = new Database("jdbc:postgresql://"+host+"/"+database, role, password);
 				if(db.getConnection().isValid(0)){
-                    logger.debug("Database connected to: " +host+"/"+database);
+                    logger.info("Database connected to: " +host+"/"+database);
                 }
 				db.clearAll();
 			}
@@ -108,6 +110,10 @@ public class FlipperLauncherThread extends Thread {
 					watchedTemplates.add(watcher);
 					watcher.start();
 				}
+			}
+			if(this.analyze){
+				logger.info("Analyzing dataflow");
+				tc.dataflow.analyze();
 			}
 			if(db != null){
 			    db.commit();
