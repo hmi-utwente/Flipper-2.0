@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import hmi.flipper2.dataflow.DataFlow;
+import hmi.flipper2.dataflow.DataFlowManager;
 import hmi.flipper2.debugger.FlipperDebugger;
 import hmi.flipper2.effect.EffectList;
 import hmi.flipper2.postgres.Database;
@@ -104,10 +105,11 @@ public class TemplateController {
 	public FlipperDebugger dbg = null;	// the active debugger, when active same as persistent_dbg
 	private FlipperDebugger persistent_dbg = null; // the debugger which is persistent but may be inactive
 	public int	cid; // controller id in Database
-	private List<TemplateFile> tf_list;
+	public List<TemplateFile> tf_list;
 	List<Template> all_templates, base_templates, cond_templates;
 	Template conditional_stack = null;
 	public  Is is;
+	public DataFlowManager dataflow;
 	
 	/**
 	 * This method constructs a running TemplateController.
@@ -126,6 +128,7 @@ public class TemplateController {
 		this.name = name;
 		this.db = db;
 		this.is = new Is(this, this.db);
+		this.dataflow = new DataFlowManager(this);
 		if ( this.db != null ) {
 			this.cid = db.getControllerID(name);
 			this.tf_list = db.getTemplateFiles(this);
@@ -413,14 +416,6 @@ public class TemplateController {
 		if ( url == null )
 			throw new FlipperException("Resource file: " + rpath + " not found");
                 return url.getPath().replaceFirst("^/(.:/)", "$1");
-	}
-	
-	public String analyze() {
-		for(TemplateFile tf: this.tf_list) {
-			tf.flowIn();
-			tf.flowOut();
-		}
-		return "INCOMPLETE";
 	}
 	
 }

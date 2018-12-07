@@ -49,7 +49,9 @@ public class Template extends FlipperObject {
 			} else if (coe.tag.equals("effects")) {
 				listOfEffectList.add(handle_effects(coe));
 			} else if (coe.tag.equals("javascript")) {
-				this.tf.tc.is.execute(coe.characters.toString());
+				String js = coe.characters.toString();
+				this.init_js.add(js);
+				this.tf.tc.is.execute(js);
 			} else
 				throw new RuntimeException("INCOMPLETE: bad template: "+coe.tag);
 		}
@@ -79,6 +81,8 @@ public class Template extends FlipperObject {
 
 	ConditionList preconditions = null;
 	
+	public List<String> init_js = new ArrayList<String>();
+	
 	private void handle_preconditions(SimpleElement el) throws FlipperException {
 		preconditions = new ConditionList(el.attr.get("mode"));
 		for (SimpleElement pc : el.children) {
@@ -87,7 +91,9 @@ public class Template extends FlipperObject {
 			} else if (pc.tag.equals("function") || pc.tag.equals("method")) {
 				preconditions.add(new JavaCondition(pc.attr.get("id"), (JavaEffect)handle_effect(this, tf.tc.is, pc)));
 			} else if (pc.tag.equals("javascript")) {
-				this.tf.tc.is.execute(pc.characters.toString());
+				String js = pc.characters.toString();
+				this.init_js.add(js);
+				this.tf.tc.is.execute(js);
 			} else
 				throw new RuntimeException("INCOMPLETE: bad precondition: "+pc.tag);	
 		}
@@ -106,9 +112,11 @@ public class Template extends FlipperObject {
 								( a_dynamic_mode != null && a_dynamic_mode.equals("true"))
 						);
 		for (SimpleElement ee : el.children) {
-			if ( ee.tag.equals("javascript"))
-				this.tf.tc.is.execute(ee.characters.toString());
-			else 
+			if ( ee.tag.equals("javascript")) {
+				String js = ee.characters.toString();
+				this.init_js.add(js);
+				this.tf.tc.is.execute(js);
+			} else 
 				effects.add(handle_effect(this, tf.tc.is, ee));
 		}
 		return effects;
@@ -242,8 +250,9 @@ public class Template extends FlipperObject {
 	}
 	
 	public Set<String> flowIn() {
-		// INCOMPLE, inline JS in template
 		Set<String> res = new HashSet<String>();
+		for(String js : this.init_js)
+			res.addAll(DataFlow.extractRefs(js));
 		res.addAll(preconditions.flowIn());
 		for(EffectList l : listOfInitializeEffectList)
 			res.addAll(l.flowIn());

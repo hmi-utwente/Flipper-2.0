@@ -38,7 +38,7 @@ public class TemplateFile extends FlipperObject {
 		activate(db_is_value);
 	}
 	
-	public List<String> db_init_js = new ArrayList<String>();
+	public List<String> init_js = new ArrayList<String>();
 	
 	private void handle_section(SimpleElement el) throws FlipperException {
 		if (el.tag.equals("is")) {
@@ -47,7 +47,7 @@ public class TemplateFile extends FlipperObject {
 			handle_database(el);
 		} else if (el.tag.equals("javascript")) {
 			String js = el.characters.toString();
-			this.db_init_js.add(js);
+			this.init_js.add(js);
 			this.tc.is.execute(js);
 		} else if (el.tag.equals("template")) {
 			handle_template(el);
@@ -158,7 +158,7 @@ public class TemplateFile extends FlipperObject {
 	
 	public Set<String> flowIn() {
 		Set<String> res = new HashSet<String>();
-		for(String js : this.db_init_js)
+		for(String js : this.init_js)
 			res.addAll(DataFlow.extractRefs(js));
 		res.addAll(this.db_init_java.flowIn());
 		res.addAll(this.db_cleanup_java.flowIn());
