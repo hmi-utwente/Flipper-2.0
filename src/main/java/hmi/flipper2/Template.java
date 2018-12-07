@@ -83,7 +83,7 @@ public class Template extends FlipperObject {
 		preconditions = new ConditionList(el.attr.get("mode"));
 		for (SimpleElement pc : el.children) {
 			if (pc.tag.equals("condition")) {
-				preconditions.add(new JsCondition(pc.attr.get("id"), new JsExpression(tf.tc.is,pc.characters.toString(),true)));
+				preconditions.add(new JsCondition(pc.attr.get("id"), new JsExpression(tf.tc.is,"",pc.characters.toString(),"return %s")));
 			} else if (pc.tag.equals("function") || pc.tag.equals("method")) {
 				preconditions.add(new JavaCondition(pc.attr.get("id"), (JavaEffect)handle_effect(this, tf.tc.is, pc)));
 			} else if (pc.tag.equals("javascript")) {
@@ -242,7 +242,7 @@ public class Template extends FlipperObject {
 	}
 	
 	public Set<String> flowIn() {
-		// INCOMPLE, inline JS
+		// INCOMPLE, inline JS in template
 		Set<String> res = new HashSet<String>();
 		res.addAll(preconditions.flowIn());
 		for(EffectList l : listOfInitializeEffectList)
@@ -255,7 +255,6 @@ public class Template extends FlipperObject {
 	}
 	
 	public Set<String> flowOut() {
-		// INCOMPLE, inline JS
 		Set<String> res = new HashSet<String>();
 		res.addAll(preconditions.flowOut());
 		for (EffectList l : listOfInitializeEffectList)

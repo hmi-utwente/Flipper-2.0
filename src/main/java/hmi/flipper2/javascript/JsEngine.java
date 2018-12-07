@@ -71,52 +71,65 @@ public class JsEngine {
 	
 	public static int JSON_PP_SPACING = 2;
 	
+	private JsExpression stringify = null;
+	
 	public String getJSONfromJs(String js_expr) throws FlipperException {
-		try {
-			return (String)engine.eval("JSON.stringify("+js_expr+", null, "+JSON_PP_SPACING +")");
-		} catch (ScriptException e) {
-			throw new FlipperException(e, "JSON.stringify("+js_expr+")");
+		if (stringify == null) {
+			this.stringify = new JsExpression(this, "strxpr",
+					"JSON.stringify(eval(" + "strxpr" + "), null, " + JSON_PP_SPACING + ")", "return %s");
 		}
+		return this.stringify.eval_string(js_expr);
+		// return (String)engine.eval("JSON.stringify("+js_expr+", null,
+		// "+JSON_PP_SPACING +")");
 	}
+	
+	private JsExpression assignJson = null;
+	
+//	public void assignJSONtoJsORG(String var, String json_expr) throws FlipperException {
+//		String script = var + "=" + "JSON.parse(" + escapeForJava(json_expr, true) + ")";
+//		eval(script);
+//	}
 	
 	public void assignJSONtoJs(String var, String json_expr) throws FlipperException {
-		String script = var + "=" + "JSON.parse(" + escapeForJava(json_expr, true) + ")";
-		eval(script);
+		if (assignJson == null) {
+			this.assignJson = new JsExpression(this, "jvar,jsonexpr",
+					"_jsonexpr=JSON.parse(jsonexpr,true);eval(jvar + '=_jsonexpr;')", "%s");
+		}
+		this.assignJson.eval_void(var,json_expr);
 	}
 	
-	public void assignObject2Js(String var, Object java_object) throws FlipperException {		
+	public void assignObject2Js(String var, Object java_object) throws FlipperException {
+		// INCOMPLETE, could be solved with function
 		engine.put("xfervalue", java_object);
 		eval( var + "=" +"xfervalue");
 	}
 	
-	public static String escapeForJava( String value, boolean quote )
-	{
-	    StringBuilder builder = new StringBuilder();
-	    if( quote )
-	        builder.append( "\"" );
-	    for( char c : value.toCharArray() )
-	    {
-	        if( c == '\'' )
-	            builder.append( "\\'" );
-	        else if ( c == '\"' )
-	            builder.append( "\\\"" );
-	        else if( c == '\r' )
-	            builder.append( "\\r" );
-	        else if( c == '\n' )
-	            builder.append( "\\n" );
-	        else if( c == '\t' )
-	            builder.append( "\\t" );
-	        else if( c < 32 || c >= 127 )
-	            builder.append( String.format( "\\u%04x", (int)c ) );
-	        else
-	            builder.append( c );
-	    }
-	    if( quote )
-	        builder.append( "\"" );
-	    return builder.toString();
-	}
-
-	
+//	private static String escapeForJava( String value, boolean quote )
+//	{
+//	    StringBuilder builder = new StringBuilder();
+//	    if( quote )
+//	        builder.append( "\"" );
+//	    for( char c : value.toCharArray() )
+//	    {
+//	        if( c == '\'' )
+//	            builder.append( "\\'" );
+//	        else if ( c == '\"' )
+//	            builder.append( "\\\"" );
+//	        else if( c == '\r' )
+//	            builder.append( "\\r" );
+//	        else if( c == '\n' )
+//	            builder.append( "\\n" );
+//	        else if( c == '\t' )
+//	            builder.append( "\\t" );
+//	        else if( c < 32 || c >= 127 )
+//	            builder.append( String.format( "\\u%04x", (int)c ) );
+//	        else
+//	            builder.append( c );
+//	    }
+//	    if( quote )
+//	        builder.append( "\"" );
+//	    return builder.toString();
+//	}
 	
 	/*
 	 * 

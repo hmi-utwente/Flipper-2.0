@@ -23,7 +23,7 @@ public class AssignEffect extends Effect {
 	
 	public Object doIt(Is is) throws FlipperException {
 		if ( this.js_expr == null )
-			this.js_expr = new JsExpression(is, this.var + "=" + expr, false);
+			this.js_expr = new JsExpression(is,"",this.var + "=" + expr, "%s");
 		is.assignJsExpression(this.var, this.js_expr);
 		return null;
 	}
