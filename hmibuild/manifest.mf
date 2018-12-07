@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Main-Class: main
+       
+Name: flipper2.0
+Specification-Title:    flipper2.0
+Specification-Version:  0.1
+Specification-Vendor:   HMI
+Implementation-Title:   flipper2.0
+Implementation-Version: December 04 2018  03:36 PM
+Implementation-Vendor:  HMI
