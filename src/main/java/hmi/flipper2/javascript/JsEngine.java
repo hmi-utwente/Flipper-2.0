@@ -22,7 +22,11 @@ public class JsEngine {
 	
 	protected void js_init(TemplateController tc) throws FlipperException {
 		this.mgr = new ScriptEngineManager();
-		this.engine = mgr.getEngineByName("nashorn");
+		String engineName = "nashorn";
+		if(Config.useGraalJS){
+			engineName = "graal.js";
+		}
+		this.engine = mgr.getEngineByName(engineName);
 		this.invocable = (Invocable)engine;
 		this.tc = tc;
 	}

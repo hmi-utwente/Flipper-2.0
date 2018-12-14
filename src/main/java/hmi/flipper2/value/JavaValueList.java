@@ -16,10 +16,19 @@ public class JavaValueList extends ArrayList<JavaValue> implements DataFlow {
 
 	public Object[] objectArray() throws FlipperException {
 		Object res[] = new Object[this.size()];
-		
-		for(int i=0; i<this.size(); i++) {
-			res[i] = this.get(i).getObject();
-		}
+        for(int i=0; i<this.size(); i++) {
+            switch(this.get(i).objectClass().getName()){
+                case "java.lang.Double" :
+                    res[i] = Double.parseDouble(this.get(i).getObject().toString());
+                    break;
+                case "java.lang.Integer" :
+                    res[i] = Integer.parseInt(this.get(i).getObject().toString());
+                    break;
+                default :
+                    res[i] = this.get(i).getObject();
+                    break;
+            }
+        }
 		return res;
 	}
 	

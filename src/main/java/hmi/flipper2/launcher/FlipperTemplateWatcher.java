@@ -11,8 +11,6 @@ import java.nio.file.WatchService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sun.nio.file.SensitivityWatchEventModifier;
-
 public class FlipperTemplateWatcher extends Thread {
 	
 	private static Logger logger = LoggerFactory.getLogger(FlipperTemplateWatcher.class.getName());
@@ -53,7 +51,7 @@ public class FlipperTemplateWatcher extends Thread {
 		fileChanged = false;
 		logger.debug("Watching template: "+watchedFileName);
 		try (final WatchService watchService = FileSystems.getDefault().newWatchService()) {
-			path.getParent().register(watchService, new WatchEvent.Kind[]{StandardWatchEventKinds.ENTRY_MODIFY}, SensitivityWatchEventModifier.HIGH);
+			path.getParent().register(watchService, new WatchEvent.Kind[]{StandardWatchEventKinds.ENTRY_MODIFY});
 			final WatchKey wk = watchService.take();
 		    while (!stop) {
 		    	if (paused) continue;
