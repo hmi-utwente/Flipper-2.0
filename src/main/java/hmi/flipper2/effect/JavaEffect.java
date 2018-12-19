@@ -70,7 +70,10 @@ public class JavaEffect extends Effect {
 			//
 			this.classObject = Class.forName(this.className);
 			this.paramTypes = this.arguments.classArray();
-			this.callMethod = this.classObject.getMethod(this.callName, this.paramTypes);
+			if ( this.callName != null )
+				this.callMethod = this.classObject.getMethod(this.callName, this.paramTypes);
+			else
+				this.callMethod = null; // just create an object
 			if (this.callmode == CallMode.CALL_METHOD) {
 				if (this.objectmode == ObjectMode.OBJECT_SINGLE)
 					this.callObject = null;
@@ -154,7 +157,10 @@ public class JavaEffect extends Effect {
 		try {
 			if (this.objectmode == ObjectMode.OBJECT_MULTI || this.callObject == null)
 				this.callObject = this.createObject();
-			return this.callMethod.invoke(this.callObject, method_args);
+			if (this.callMethod != null )
+				return this.callMethod.invoke(this.callObject, method_args);
+			else
+				return null;
 		} catch (IllegalAccessException | SecurityException | IllegalArgumentException
 				| InvocationTargetException | InstantiationException e) {
 			throw new FlipperException(e,
