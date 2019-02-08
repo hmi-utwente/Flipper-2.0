@@ -75,6 +75,23 @@ public class Template extends FlipperObject {
 		return res;
 	}
 	
+	public Template popfirst() {
+		if (this.next_conditional == null)
+			return null;
+		else {
+			Template t = this.next_conditional, prev_t = null;
+			while (t.next_conditional != null) {
+				prev_t = t;
+				t = t.next_conditional;
+			}
+			if (prev_t == null)
+				this.next_conditional = null;
+			else
+				prev_t.next_conditional = null;
+			return t;
+		}
+	}
+	
 	/**
 	 * 
 	 */
