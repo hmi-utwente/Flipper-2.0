@@ -37,6 +37,8 @@
        <effects>
       
           <assign id="counter++" is="is.counter.value"> addOne( is.counter.value ) </assign> 
+          
+          <assign id="cdatatest" is="is.counter.cdata"> <![CDATA["I <can> put &gt anything here"]]> +" and more" </assign> 
      
      	  <function class="hmi.flipper2.example.Dynamic" name="f">
               <arguments>
