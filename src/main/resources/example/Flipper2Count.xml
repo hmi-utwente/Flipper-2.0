@@ -18,6 +18,13 @@
        <initeffects>
  			<assign id="autoinit-1" is="is.counter.autoinit"> "AUTOINIT" </assign>
 <!--  			<system command="debugger" arg="off"/> -->
+			<assign is="is.counter.mytemplate" raw="true"><![CDATA[
+<speech id="s1" >
+  <text>{{text}}</text>
+  {{> description}}
+</speech>
+]]></assign>
+
  	  </initeffects>
 		
       <preconditions mode="and">
