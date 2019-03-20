@@ -1,9 +1,12 @@
 package hmi.flipper2.javascript;
 
 import javax.script.Invocable;
+import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import javax.script.SimpleScriptContext;
+
 import hmi.flipper2.TemplateController;
 import hmi.flipper2.debugger.FlipperDebugger;
 import hmi.flipper2.Config;
@@ -71,6 +74,13 @@ public class JsEngine {
 			}				
 		}
 		throw new FlipperException("Expression does not return Number: " + js_expr);
+	}
+	
+	public static final String xfervar = "xfervar";
+	
+	public void assignRawString(String lhs, String raw) throws FlipperException {
+		this.engine.put(xfervar, raw);
+		eval(lhs + " = " + xfervar);
 	}
 	
 	public static int JSON_PP_SPACING = 2;

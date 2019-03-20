@@ -12,6 +12,7 @@ import hmi.flipper2.dataflow.DataFlow;
 import hmi.flipper2.effect.AssignEffect;
 import hmi.flipper2.effect.BehaviourJavaEffect;
 import hmi.flipper2.effect.DerefAssignEffect;
+import hmi.flipper2.effect.DirectAssignEffect;
 import hmi.flipper2.effect.Effect;
 import hmi.flipper2.effect.EffectList;
 import hmi.flipper2.effect.FunctionJavaEffect;
@@ -73,6 +74,23 @@ public class Template extends FlipperObject {
 		Template res = this.next_conditional;
 		this.next_conditional = null;	
 		return res;
+	}
+	
+	public Template popfirst() {
+		if (this.next_conditional == null)
+			return null;
+		else {
+			Template t = this.next_conditional, prev_t = null;
+			while (t.next_conditional != null) {
+				prev_t = t;
+				t = t.next_conditional;
+			}
+			if (prev_t == null)
+				this.next_conditional = null;
+			else
+				prev_t.next_conditional = null;
+			return t;
+		}
 	}
 	
 	/**
@@ -137,8 +155,12 @@ public class Template extends FlipperObject {
 	    	String is_name = ee.characters.toString();
 	    	if ( is_name.startsWith("*"))
 	    		result = new DerefAssignEffect(id, ee.attr.get("is"), is_name);
-	    	else
-	    		result = new AssignEffect(id, ee.attr.get("is"), is_name);
+	    	else {
+	    		if ( ee.attr.get("raw")!=null && ee.attr.get("raw").toLowerCase().equals("true"))
+	    			result = new DirectAssignEffect(id, ee.attr.get("is"), is_name);
+	    		else
+	    			result = new AssignEffect(id, ee.attr.get("is"), is_name);
+	    	}
 		} else if (ee.tag.equals("db")) {
 			throw new RuntimeException("INCOMPLETE: DB ELEMENT: " + ee);
 		} else if (ee.tag.equals("checktemplates")) {

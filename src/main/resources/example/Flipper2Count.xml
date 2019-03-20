@@ -18,6 +18,13 @@
        <initeffects>
  			<assign id="autoinit-1" is="is.counter.autoinit"> "AUTOINIT" </assign>
 <!--  			<system command="debugger" arg="off"/> -->
+			<assign is="is.counter.mytemplate" raw="true"><![CDATA[
+<speech id="s1" >
+  <text>{{text}}</text>
+  {{> description}}
+</speech>
+]]></assign>
+
  	  </initeffects>
 		
       <preconditions mode="and">
@@ -37,6 +44,8 @@
        <effects>
       
           <assign id="counter++" is="is.counter.value"> addOne( is.counter.value ) </assign> 
+          
+          <assign id="cdatatest" is="is.counter.cdata"> <![CDATA["I <can> put &gt anything here"]]> +" and more" </assign> 
      
      	  <function class="hmi.flipper2.example.Dynamic" name="f">
               <arguments>

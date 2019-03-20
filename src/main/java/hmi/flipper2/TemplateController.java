@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -107,7 +108,8 @@ public class TemplateController {
 	public int	cid; // controller id in Database
 	public List<TemplateFile> tf_list;
 	List<Template> all_templates, base_templates, cond_templates;
-	Template conditional_stack = null;
+	// Template conditional_stack = null;
+	LinkedList<Template>	conditional_fifo = null;
 	public  Is is;
 	public DataFlowManager dataflow;
 	
@@ -242,7 +244,8 @@ public class TemplateController {
 	
 	public void checkConditionalTemplates(String regexpr) throws FlipperException {
 		for (Template t : filterTemplates(this.cond_templates, regexpr) ) {
-			this.conditional_stack = t.push(this.conditional_stack);			
+			// this.conditional_stack = t.push(this.conditional_stack);
+			this.conditional_fifo.add(t);
 		}
 	}
 	
@@ -295,7 +298,8 @@ public class TemplateController {
 	public boolean checkTemplates(String templateFilter) throws FlipperException {
 		try {
 			boolean changed = false;
-			this.conditional_stack = null;
+			// this.conditional_stack = null;
+			this.conditional_fifo = new LinkedList<Template>();
 			//
 			if ( Config.debugging && this.dbg != null ) {
 				this.dbg.restart();
@@ -305,9 +309,13 @@ public class TemplateController {
 					if ( Config.debugging && this.dbg != null )
 						this.dbg.start_CheckTemplate(template.id(), null);
 					changed =  checkPreconditions(template, Behaviour.IMMEDIATE_EFFECT) || changed;
-					while ( this.conditional_stack != null ) {
-						Template toCheck = this.conditional_stack;
-						this.conditional_stack = this.conditional_stack.pop();
+//					while ( this.conditional_stack != null ) {
+//						Template toCheck = this.conditional_stack;
+//						this.conditional_stack = this.conditional_stack.pop();
+//						checkPreconditions(toCheck, Behaviour.IMMEDIATE_EFFECT);
+//					}
+					while ( ! this.conditional_fifo.isEmpty() ) {
+						Template toCheck = this.conditional_fifo.remove();
 						checkPreconditions(toCheck, Behaviour.IMMEDIATE_EFFECT);
 					}
 					if ( Config.debugging && this.dbg != null )
