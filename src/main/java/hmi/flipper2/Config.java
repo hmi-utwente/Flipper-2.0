@@ -4,6 +4,6 @@ public class Config {
 	
 	public static final boolean debugging = false;
 
-	public static final boolean useGraalJS = false;
+	public static final boolean useGraalJS = true;
 		
 }

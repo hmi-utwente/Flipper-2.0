@@ -17,6 +17,7 @@
 		<groupId>ch.qos.logback</groupId>
 		<artifactId>logback-classic</artifactId>
 		<version>1.2.3</version>
+		<!--<scope>test</scope>-->
 	</dependency>
 	<dependency>
 		<groupId>org.hamcrest</groupId>
@@ -45,6 +46,7 @@
 			<version>1.7.25</version>
 		</dependency>
 	</dependencies>
+
 	<!--Experimental dependencies-->
 	<profiles>
 		<profile>
@@ -155,7 +157,7 @@
 										<argument>-XX:+UnlockExperimentalVMOptions</argument>
 										<argument>-XX:+EnableJVMCI</argument>
 										<argument>--upgrade-module-path=${compiler.dir}/compiler.jar</argument>
-										<argument>com.mycompany.app.App</argument>
+										<argument>hmi.flipper2.launcher.FlipperLauncher</argument>
 									</arguments>
 								</configuration>
 							</execution>
@@ -172,7 +174,7 @@
 										<argument>-classpath</argument>
 										<!-- automatically creates the classpath using all project dependencies, also adding the project build directory -->
 										<classpath/>
-										<argument>com.mycompany.app.App</argument>
+										<argument>hmi.flipper2.launcher.FlipperLauncher</argument>
 									</arguments>
 								</configuration>
 							</execution>
@@ -265,7 +267,7 @@
 								<argument>-classpath</argument>
 								<!-- automatically creates the classpath using all project dependencies, also adding the project build directory -->
 								<classpath/>
-								<argument>hmi.flipper2.Main</argument>
+								<argument>hmi.flipper2.launcher.FlipperLauncher</argument>
 							</arguments>
 						</configuration>
 					</plugin>
@@ -277,7 +279,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<graalvm.version>1.0.0-rc9</graalvm.version>
+		<graalvm.version>19.0.0</graalvm.version>
 		<compiler.dir>${project.build.directory}/compiler</compiler.dir>
 	</properties>
 </project>
