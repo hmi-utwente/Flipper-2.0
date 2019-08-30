@@ -240,5 +240,9 @@ public class FlipperLauncherThread extends Thread {
 		}
 		return resetFiles.size() > 0;
 	}
+
+	public boolean isRunning(){
+		return !this.stop;
+	}
 	
 }
