@@ -1,39 +1,54 @@
 <behaviourtemplates>
 <is name="behaviour">
 {
-                "a" : [
-                {"b" : "1"},
-                {"b" : "2"}
-                ]
+    "a" : [
+        {"b" : "1"},
+        {"b" : "2"}
+    ],
+    "array":[1,2,3,[2,4,2]],
+    "c" : ""
 }
 </is>
  
 <javascript>
 <![CDATA[
-function condition(c){
-                return c.b === "2";
-}
-function add(array, element){
-                array.unshift(element);
-                return array;
-}
 
-print(1);
-is.tmpdebug = [{"b":"2"}].find(condition);
+    function condition(c){
+        return c.b === "2";
+    }
+
+    function add(array, element){
+        array.unshift(element);
+        return array;
+    }
+
+    print(1);
+
+    function test(){
+        let doc = nlp('she sells seashells by the seashore.');
+        doc.verbs().toPastTense();
+        print(doc.text());
+        return doc.text();
+    }
+
 
 ]]>
 </javascript>
-<!-- <template id="test1"> -->
-<!--                 <preconditions><![CDATA[is.behaviour.a.length < 3 ]]></precondition> -->
-<!--                 <effects> -->
-<!--                                <assign is="is.behaviour.a">add(is.behaviour.a,{"b" : "1"})</assign> -->
-<!--                 </effects> -->
-<!-- </template> -->
-<template id="test2">
-                <preconditions><condition><![CDATA[is.behaviour.a.length < 3 ]]></condition></preconditions>
-                <effects>
-                               <assign is="is.behaviour.b">[{"b":"2"}].find(condition)</assign>
-                </effects>
-</template>
+ <template id="test1">
+     <preconditions>
+         <condition><![CDATA[is.behaviour.a.length < 3 ]]></condition>
+     </preconditions>
+     <effects>
+         <assign is="is.behaviour.a">add(is.behaviour.a,{"b" : "1"})</assign>
+         <assign is="is.behaviour.array">is.behaviour.array.flat()</assign>
+         <assign is="is.behaviour.c">test()</assign>
+     </effects>
+ </template>
+<!--    <template id="test2">-->
+<!--                    <preconditions><condition><![CDATA[is.behaviour.a.length < 3 ]]></condition></preconditions>-->
+<!--                    <effects>-->
+<!--                                   <assign is="is.behaviour.b">[{"b":"2"}].find(condition)</assign>-->
+<!--                    </effects>-->
+<!--    </template>-->
 </behaviourtemplates>
  

@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>hmi.flipper2.0</groupId>
 	<artifactId>flipper2.0</artifactId>
-	<version>0.1</version>
+	<version>0.2</version>
 	<packaging>jar</packaging>
 	<dependencies>
 	<dependency>
@@ -46,13 +46,11 @@
 			<version>1.7.25</version>
 		</dependency>
 	</dependencies>
-
-	<!--Experimental dependencies-->
 	<profiles>
 		<profile>
 			<id>jdk11</id>
 			<activation>
-				<jdk>11</jdk>
+				<jdk>[11,</jdk>
 			</activation>
 			<dependencies>
 				<dependency>
@@ -229,57 +227,84 @@
 			<build>
 				<plugins>
 					<plugin>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<version>3.8.0</version>
-						<configuration>
-							<source>1.8</source>
-							<target>1.8</target>
-						</configuration>
-					</plugin>
-					<plugin>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<version>2.22.1</version>
-					</plugin>
-					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
 						<version>1.6.0</version>
 						<executions>
 							<execution>
+								<id>default-cli</id>
 								<goals>
 									<goal>exec</goal>
 								</goals>
 								<configuration>
 									<arguments>
-										<argument>--module-path</argument>
-										<!-- automatically creates the modulepath using all project dependencies, also adding the project build directory -->
-										<modulepath/>
 										<argument>-classpath</argument>
-										<!-- automatically creates the classpath using all project dependencies, also adding the project build directory -->
 										<classpath/>
+										<argument>hmi.flipper2.launcher.FlipperLauncher</argument>
 									</arguments>
 								</configuration>
 							</execution>
 						</executions>
 						<configuration>
 							<executable>${JAVA_HOME}/bin/java</executable>
-							<arguments>
-								<argument>-classpath</argument>
-								<!-- automatically creates the classpath using all project dependencies, also adding the project build directory -->
-								<classpath/>
-								<argument>hmi.flipper2.launcher.FlipperLauncher</argument>
-							</arguments>
 						</configuration>
 					</plugin>
 				</plugins>
 			</build>
 		</profile>
 	</profiles>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.0</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.22.1</version>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.6.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<arguments>
+								<argument>--module-path</argument>
+								<!-- automatically creates the modulepath using all project dependencies, also adding the project build directory -->
+								<modulepath/>
+								<argument>-classpath</argument>
+								<!-- automatically creates the classpath using all project dependencies, also adding the project build directory -->
+								<classpath/>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+				<configuration>
+					<executable>${JAVA_HOME}/bin/java</executable>
+					<arguments>
+						<argument>-classpath</argument>
+						<!-- automatically creates the classpath using all project dependencies, also adding the project build directory -->
+						<classpath/>
+						<argument>com.mycompany.app.App</argument>
+					</arguments>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<graalvm.version>19.0.0</graalvm.version>
+		<graalvm.version>19.3.1</graalvm.version>
 		<compiler.dir>${project.build.directory}/compiler</compiler.dir>
 	</properties>
 </project>
