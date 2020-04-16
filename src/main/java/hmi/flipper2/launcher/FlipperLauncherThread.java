@@ -23,12 +23,14 @@ import hmi.flipper2.FlipperException;
 import hmi.flipper2.TemplateController;
 import hmi.flipper2.debugger.FlipperDebugger;
 import hmi.flipper2.postgres.Database;
+import hmi.flipper2.viewer.ISViewer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.logging.Level;
 
 public class FlipperLauncherThread extends Thread {
 	
@@ -48,6 +50,8 @@ public class FlipperLauncherThread extends Thread {
 	private int maxSteps;
 	private boolean stopIfUnchanged;
 	private AutoReloadBehavior autoReloadTemplates;
+	private boolean showISViewer;
+	private ISViewer viewer;
 	// Database
 	private Database db;
 	private String host;
@@ -93,6 +97,7 @@ public class FlipperLauncherThread extends Thread {
 		this.evalFrequency = Double.parseDouble(ps.getProperty("evalFrequency", "1.0"));
 		this.maxSteps = Integer.parseInt(ps.getProperty("maxSteps", "0"));
 		this.stopIfUnchanged = Boolean.parseBoolean(ps.getProperty("stopIfUnchanged", "False"));
+		this.showISViewer = Boolean.parseBoolean(ps.getProperty("isViewer", "False"));
 		// Database
 		this.host = ps.getProperty("host", "");
 		this.database = ps.getProperty("database", "");
@@ -108,6 +113,11 @@ public class FlipperLauncherThread extends Thread {
 		}
 		
 		try {
+			if(this.showISViewer){
+				this.viewer = new ISViewer();
+				this.viewer.showViewer(this.viewer);
+			}
+
 			if (!host.equals("") && !database.equals("") && !role.equals("")) {
 				this.db = new Database("jdbc:postgresql://"+host+"/"+database, role, password);
 				if(db.getConnection().isValid(0)){
@@ -144,7 +154,16 @@ public class FlipperLauncherThread extends Thread {
 		} catch (SQLException e) {
             e.printStackTrace();
         }
-    }
+	}
+	
+	public void updateGUI(){
+		try{
+			this.viewer.updateTree(tc.getIs("is"));
+		} catch (FlipperException ex){
+			logger.error("Could not update the GUI");
+		}
+	}
+
 	
 	public void run() {
 		int steps = 0;
@@ -163,6 +182,9 @@ public class FlipperLauncherThread extends Thread {
 				boolean changed = false;
 				try { // Do the work
 					changed = tc.checkTemplates();
+					if(this.showISViewer && changed){
+						this.updateGUI();
+					}
 					steps++;
 					LogIS(steps);
 				} catch (FlipperException e) {

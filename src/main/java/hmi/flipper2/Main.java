@@ -20,8 +20,6 @@ package hmi.flipper2;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.core.util.StatusPrinter;
 import hmi.flipper2.debugger.FlipperDebugger;
 import hmi.flipper2.postgres.Database;
 
@@ -64,10 +62,6 @@ public class Main {
 			TemplateController.destroy("Test", db);
 		} catch (FlipperException e) {
 			FlipperException.handle(e);
-		}
-		if ( false ) {
-		    LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-		    StatusPrinter.print(lc);			
 		}
 	}
 	

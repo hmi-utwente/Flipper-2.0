@@ -128,7 +128,11 @@ public class JavaEffect extends Effect {
 				return res;
 			}
 		} else if (this.constructors.size() == 0) {
-			return checkPersistent( this.classObject.newInstance() );
+			try {
+				return checkPersistent( this.classObject.getDeclaredConstructor().newInstance() );
+			} catch (NoSuchMethodException ex) {
+				throw new FlipperException("Unknown constructor: "+ex);                        
+			}
 		} else {
 			try {
 				Class<?> ctypes[] = this.constructors.classArray();
