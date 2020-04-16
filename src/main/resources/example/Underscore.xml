@@ -2,7 +2,28 @@
 <behaviourtemplates>
   <is name="underscore">
         {
-            "test" : []
+            "test" : [],
+            "cheers": [3,5,[2,{"z":{"x":"z"}},{"y":2},1],2,[2,1]],
+            "test2":
+            [
+                {
+                    "a":"b",
+                    "c":true,
+                    "d":4.2,
+                    "e":4,
+                    "f":{}
+                },
+                {
+                    "kim":true
+                },
+                false
+            ],
+            "2":{
+                "help":{
+                    "nee":"ja",
+                    "test":[]
+                }
+            }
         }
     </is>
   <template id="1" name="Template A">
