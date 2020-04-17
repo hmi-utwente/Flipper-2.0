@@ -7,6 +7,8 @@ Java 8 or higher
 # Get Started
 There are multiple ways you can add Flipper to your project. Flipper 2.0.0.2 first official release is now available via Jitpack.io.
 
+Once you are done with installing, you can look at the [Wiki](https://github.com/hmi-utwente/Flipper-2.0/wiki) for more help.
+
 ## Gradle installation
 For use in Gradle, add the jitpack repository and/or the dependency
 ```kotlin 
