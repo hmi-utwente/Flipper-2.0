@@ -195,45 +195,7 @@ public class ISViewer extends javax.swing.JFrame {
         for (DefaultMutableTreeNode node : nodes) {
             master.add(node);            
         }
-        return master;
-//        DefaultMutableTreeNode[] nodes = {};
-//        if(obj instanceof JsonObject){
-//            for (String key : ((JsonObject)obj).keySet()) {
-//                if (((JsonObject)obj).get(key) instanceof JsonObject) {
-//                    DefaultMutableTreeNode node1 = new DefaultMutableTreeNode(key);
-//                    this.serializeJsonToTree(((JsonObject)obj).get(key), node1);
-//                    master.add(node1);                
-//                }        
-//                else if(((JsonObject)obj).get(key) instanceof JsonArray){
-//                    DefaultMutableTreeNode node1 = new DefaultMutableTreeNode(key);
-//                    JsonArray array = ((JsonObject) obj).getJsonArray(key);
-//                    for(JsonValue element : array){
-//                        this.serializeJsonToTree(element, node1);
-//                    }                                        
-//                    master.add(node1);
-//                }
-//                else {
-//                    nodes = Arrays.copyOf(nodes, nodes.length + 1);
-//                    nodes[nodes.length - 1] = new DefaultMutableTreeNode(key + ": " +((JsonObject) obj).get(key));
-//                }
-//            }
-//        }
-//        else if(obj instanceof JsonArray){
-//            DefaultMutableTreeNode node1 = new DefaultMutableTreeNode(obj);  
-//            JsonArray array = (JsonArray) obj;
-//            for(JsonValue element : array){
-//                this.serializeJsonToTree(element, node1);
-//            }            
-//            master.add(node1);
-//        }
-//        else {
-//            nodes = Arrays.copyOf(nodes, nodes.length + 1);
-//            nodes[nodes.length - 1] = new DefaultMutableTreeNode(obj.toString());
-//        }
-//        for (DefaultMutableTreeNode node : nodes) {
-//            master.add(node);            
-//        }
-//        return master;        
+        return master;     
     }
     
     /**
