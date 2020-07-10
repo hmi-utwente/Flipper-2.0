@@ -128,7 +128,7 @@ public class TemplateController {
 	public int	cid; // controller id in Database
 	public List<TemplateFile> tf_list;
 	List<Template> all_templates, base_templates, cond_templates;
-	// Template conditional_stack = null;
+	Template conditional_stack = null;
 	LinkedList<Template>	conditional_fifo = null;
 	public  Is is;
 	public DataFlowManager dataflow;
@@ -318,7 +318,7 @@ public class TemplateController {
 	public boolean checkTemplates(String templateFilter) throws FlipperException {
 		try {
 			boolean changed = false;
-			// this.conditional_stack = null;
+			 this.conditional_stack = null;
 			this.conditional_fifo = new LinkedList<Template>();
 			//
 			if ( Config.debugging && this.dbg != null ) {
@@ -326,20 +326,14 @@ public class TemplateController {
 				this.dbg.start_CheckTemplates(this.name, null);
 			}
 			for (Template template : filterTemplates(this.base_templates, templateFilter) ) {
-				long startTime = System.nanoTime();
 					if ( Config.debugging && this.dbg != null )
 						this.dbg.start_CheckTemplate(template.id(), null);
 					changed =  checkPreconditions(template, Behaviour.IMMEDIATE_EFFECT) || changed;
-				long endTime = System.nanoTime();
-				long duration = (endTime - startTime);  //divide by 1000000 to get milliseconds.
-                    if(duration/1000000>50){
-						logger.debug("Duration Template, ID: " + template.id() + " and duration: " + duration/1000000);
-                    }
-//					while ( this.conditional_stack != null ) {
-//						Template toCheck = this.conditional_stack;
-//						this.conditional_stack = this.conditional_stack.pop();
-//						checkPreconditions(toCheck, Behaviour.IMMEDIATE_EFFECT);
-//					}
+					while ( this.conditional_stack != null ) {
+						Template toCheck = this.conditional_stack;
+						this.conditional_stack = this.conditional_stack.pop();
+						checkPreconditions(toCheck, Behaviour.IMMEDIATE_EFFECT);
+					}
 					while ( ! this.conditional_fifo.isEmpty() ) {
 						Template toCheck = this.conditional_fifo.remove();
 						checkPreconditions(toCheck, Behaviour.IMMEDIATE_EFFECT);
