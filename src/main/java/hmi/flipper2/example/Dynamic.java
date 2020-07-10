@@ -18,61 +18,94 @@
  ******************************************************************************/
 package hmi.flipper2.example;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import hmi.flipper2.environment.BaseFlipperEnvironment;
+import hmi.flipper2.environment.FlipperEnvironmentMessageJSON;
+import hmi.flipper2.environment.IFlipperEnvironment;
+
 import java.io.StringReader;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
 
-public class Dynamic {
+public class Dynamic extends BaseFlipperEnvironment {
 
 	private final static boolean verbose = false;
+
+	private ObjectMapper mapper;
 
 	private Double base;
 
 	public Dynamic() {
 		if (verbose)
-			System.out.println("Dynamic() called");
+			logger.info("Dynamic() called");
 		this.base = 0.0;
+	}
+
+	@Override
+	public FlipperEnvironmentMessageJSON onMessage(FlipperEnvironmentMessageJSON fenvmsg) throws Exception {
+		switch(fenvmsg.cmd){
+			case "Double":
+				Double one = fenvmsg.params.get("content").get("one").asDouble();
+				Double two = fenvmsg.params.get("content").get("two").asDouble();
+				JsonNode res = mapper.createObjectNode().put("f",this.fplus(one,two));
+				enqueueMessage(res,"f",fenvmsg.msgId);
+				break;
+			default:
+				logger.error("No appropriate CMD was given: {}",fenvmsg.cmd);
+		}
+		return null;
+	}
+
+	@Override
+	public void setRequiredEnvironments(IFlipperEnvironment[] envs) throws Exception {
+
+	}
+
+	@Override
+	public void init(JsonNode params) {
+		this.mapper = new ObjectMapper();
 	}
 
 	public Dynamic(Double base) {
 		if (verbose)
-			System.out.println("Dynamic(Double(" + base + ")) called");
+			logger.info("Dynamic(Double(" + base + ")) called");
 		this.base = base;
 	}
 
 	public static Boolean alwaysTrue() {
 		if (verbose)
-			System.out.println("Dynamic:method:alwaysTrue(" + "" + ") called.");
+			logger.info("Dynamic:method:alwaysTrue(" + "" + ") called.");
 		return Boolean.TRUE;
 	}
 
 	public static void f(String s) {
 		if (verbose)
-			System.out.println("Dynamic:static method:f(String(" + s + ")) called.");
+			logger.info("Dynamic:static method:f(String(" + s + ")) called.");
 	}
 
 	public static void f(Double d) {
 		if (verbose)
-			System.out.println("Dynamic:static method:f(Double(" + d + ")) called.");
+			logger.info("Dynamic:static method:f(Double(" + d + ")) called.");
 	}
 
 	public Double fplus(Double dl, Double dr) {
 		if (verbose)
-			System.out.println("Dynamic:static method:f(Double(" + dl + "," + dr + ")) called.");
+			logger.info("Dynamic:static method:f(Double(" + dl + "," + dr + ")) called.");
 		return base + dl + dr;
 	}
 	
 	public Double recur(Double dl, Dynamic dyn) {
 		if (verbose)
-			System.out.println("Dynamic: method:recur(" + dl + ", obj.base=" + dyn.base  + ")) called.");
+			logger.info("Dynamic: method:recur(" + dl + ", obj.base=" + dyn.base  + ")) called.");
 		return base + dl;
 	}
 
 	public String fjson(String json) {
 		if (verbose)
-			System.out.println("Dynamic:static method:fjson(json=" + json + ") called.");
+			logger.info("Dynamic:static method:fjson(json=" + json + ") called.");
 		JsonObject jso = string2json(json);
 		JsonObject jso_counter = jso.getJsonObject("counter");
 		JsonValue jso_value = jso_counter.get("value");

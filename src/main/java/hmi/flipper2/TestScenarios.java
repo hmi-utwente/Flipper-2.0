@@ -20,6 +20,8 @@ package hmi.flipper2;
 
 import hmi.flipper2.postgres.Database;
 
+import static hmi.flipper2.TemplateController.logger;
+
 public class TestScenarios {
 
 	public static void main(String[] args) {
@@ -38,9 +40,9 @@ public class TestScenarios {
 			//
 			for(int i=0; i<5; i++) {
 				tc = new TemplateController(scenario, db);
-				// System.out.println("\nBEFORE IS:\n---\n"+tc.getIs("is")+"\n");
+				logger.debug("\nBEFORE IS:\n---\n"+tc.getIs("is")+"\n");
 				tc.checkTemplates();
-				System.out.println("\nIS:\n---\n"+tc.getIs("is")+"\n");
+				logger.debug("\nIS:\n---\n"+tc.getIs("is")+"\n");
 				tc.close();
 			}
 			// TemplateController.destroy(scenario, db);

@@ -36,6 +36,8 @@ import javax.json.JsonWriter;
 
 import hmi.flipper2.FlipperException;
 
+import static hmi.flipper2.TemplateController.logger;
+
 public class PersonDbExample {
 
 	private Connection connection;
@@ -90,7 +92,7 @@ public class PersonDbExample {
 			throw new FlipperException("Person with id \"" + id + "\" not found.");
 
 		} catch (SQLException e) {
-			System.out.println("CAUGHT: " + e);
+			logger.error("CAUGHT: " + e);
 			throw new FlipperException(e);
 		}
 	}
@@ -99,7 +101,7 @@ public class PersonDbExample {
 		JsonObject jperson = string2json(json);
 		String fn = jperson.getString("firstname");
 		String ln = jperson.getString("lastname");
-		System.out.println("!@! Person \"" + fn + " " + ln + "\" sends greetings to his Mother");
+		logger.debug("!@! Person \"" + fn + " " + ln + "\" sends greetings to his Mother");
 	}
 
 	/*

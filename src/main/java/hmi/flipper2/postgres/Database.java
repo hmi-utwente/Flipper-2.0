@@ -45,7 +45,7 @@ public class Database {
 	
 	public void commit() throws FlipperException {
 		try {
-			// System.out.println("COMMIT!");
+			logger.debug("COMMIT!");
 			conn.commit();
 		} catch (SQLException e) {
 			throw new FlipperException(e);
@@ -197,7 +197,7 @@ public class Database {
 	
 	public void updateTemplateFileIs(TemplateFile tf, String is_value) throws FlipperException {
 		try {
-			// System.out.println("UPDATE TEMPLATE FILE (tf_id="+tf.tfid+"): "+ is_value);
+			logger.debug("UPDATE TEMPLATE FILE (tf_id="+tf.tfid+"): "+ is_value);
 			String updateTableSQL = "UPDATE flipper_tf SET json_is = to_json(?::json), sync_is = sync_is+1, updated = ? WHERE tfid = ? RETURNING sync_is;";
 			PreparedStatement preparedStatement = conn.prepareStatement(updateTableSQL);
 			preparedStatement.setString(1, is_value);
@@ -219,7 +219,7 @@ public class Database {
 	public List<TemplateFile> getTemplateFiles(TemplateController tc) throws FlipperException {
 		List<TemplateFile> res = new ArrayList<TemplateFile>();
 		
-		// System.out.println("INCOMPLETE:Database:getTemplateFiles");
+		logger.warn("INCOMPLETE:Database:getTemplateFiles");
 		try {
 			String selectSQL = "SELECT tfid,path,xml,json_is#>>'{}' AS json_is,sync_is FROM flipper_tf WHERE cid = ?;";
 			PreparedStatement preparedStatement = conn.prepareStatement(selectSQL);

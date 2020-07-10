@@ -25,6 +25,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import static hmi.flipper2.TemplateController.logger;
+
 public class SimpleHandler extends DefaultHandler {
 
 	private Vector<SimpleElement> stack = null;
@@ -91,7 +93,7 @@ public class SimpleHandler extends DefaultHandler {
     }
     
     public void warning(SAXParseException spe) throws SAXException {
-        System.out.println("Warning: " + getParseExceptionInfo(spe));
+        logger.warn("Warning: " + getParseExceptionInfo(spe));
     }
         
     public void error(SAXParseException spe) throws SAXException {

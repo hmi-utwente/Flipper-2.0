@@ -34,6 +34,8 @@ import hmi.flipper2.postgres.Database;
 import hmi.flipper2.sax.SimpleElement;
 import hmi.flipper2.sax.SimpleSAXParser;
 
+import static hmi.flipper2.TemplateController.logger;
+
 public class TemplateFile extends FlipperObject {
 	
 	public int    tfid = -1;
@@ -184,7 +186,7 @@ public class TemplateFile extends FlipperObject {
 			res.addAll(t.flowIn());
 		this.dfin = res;
 		this.dfin_tf = is_var2templatefile(res);
-		System.out.println("TF-IN["+id()+"]="+dfin_tf);
+		logger.debug("TF-IN["+id()+"]="+dfin_tf);
 		return res;
 	}
 	
@@ -196,7 +198,7 @@ public class TemplateFile extends FlipperObject {
 			res.addAll(t.flowOut());
 		this.dfout = res;
 		this.dfout_tf = is_var2templatefile(res);
-		System.out.println("TF-OUT["+id()+"]="+dfout_tf);
+		logger.debug("TF-OUT["+id()+"]="+dfout_tf);
 		return res;
 	}
 }

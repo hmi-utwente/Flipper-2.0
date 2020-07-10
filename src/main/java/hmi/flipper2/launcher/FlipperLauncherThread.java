@@ -98,6 +98,10 @@ public class FlipperLauncherThread extends Thread {
 		this.maxSteps = Integer.parseInt(ps.getProperty("maxSteps", "0"));
 		this.stopIfUnchanged = Boolean.parseBoolean(ps.getProperty("stopIfUnchanged", "False"));
 		this.showISViewer = Boolean.parseBoolean(ps.getProperty("isViewer", "False"));
+		if(Boolean.parseBoolean(ps.getProperty("nashorn-compat","false"))){
+			logger.warn("Running Flipper in Nashorn Compatibility mode");
+			System.setProperty("polyglot.js.nashorn-compat","true");
+		}
 		// Database
 		this.host = ps.getProperty("host", "");
 		this.database = ps.getProperty("database", "");

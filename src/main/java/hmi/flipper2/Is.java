@@ -27,6 +27,8 @@ import hmi.flipper2.javascript.JsEngine;
 import hmi.flipper2.javascript.JsExpression;
 import hmi.flipper2.postgres.Database;
 
+import static hmi.flipper2.TemplateController.logger;
+
 public class Is extends JsEngine {
 	
 	private Database db;
@@ -75,7 +77,7 @@ public class Is extends JsEngine {
 			for (Map.Entry<String, TemplateFile> entry : this.is_tf_table.entrySet()) {
 				if (entry.getValue().is_updated) {
 					entry.getValue().is_updated = false;
-					System.out.println("INCOMPLETE:Is:rollback: should re-read is after db rollback");
+					logger.warn("INCOMPLETE:Is:rollback: should re-read is after db rollback");
 				}
 			}
 		}

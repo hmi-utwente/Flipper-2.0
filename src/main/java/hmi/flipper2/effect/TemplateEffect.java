@@ -24,6 +24,8 @@ import hmi.flipper2.FlipperException;
 import hmi.flipper2.Is;
 import hmi.flipper2.dataflow.DataFlow;
 
+import static hmi.flipper2.TemplateController.logger;
+
 public class TemplateEffect extends Effect {
 
 	private String regexpr;
@@ -34,8 +36,8 @@ public class TemplateEffect extends Effect {
 			throw new FlipperException("TemplateEffect cannot have both regexpr and isregexpr");
 		this.regexpr	= regexpr;
 		this.isregexpr	= isregexpr;
-		// System.out.println("regexpr="+this.regexpr);
-		// System.out.println("isregexpr="+this.isregexpr);
+		logger.debug("regexpr="+this.regexpr);
+		logger.debug("isregexpr="+this.isregexpr);
 	}
 	
 	@Override

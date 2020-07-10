@@ -30,6 +30,8 @@ import hmi.flipper2.debugger.FlipperDebugger;
 import hmi.flipper2.Config;
 import hmi.flipper2.FlipperException;
 
+import static hmi.flipper2.TemplateController.logger;
+
 public class JsEngine {
 
 	private ScriptEngineManager mgr;
@@ -43,7 +45,7 @@ public class JsEngine {
 	
 	protected void js_init(TemplateController tc) throws FlipperException {
 		this.mgr = new ScriptEngineManager();
-		this.engine = mgr.getEngineByName("nashorn");
+		this.engine = mgr.getEngineByName("graal.js");
 		this.invocable = (Invocable)engine;
 		this.tc = tc;
 	}
@@ -62,7 +64,7 @@ public class JsEngine {
 		try {
 			if ( Config.debugging && this.tc.dbg != null )
 				this.tc.dbg.start_JavascriptExec("js", script);
-			// System.out.println("XXXXXX->"+script);
+			logger.debug("XXXXXX->"+script);
 			Object res = engine.eval(script);
 			if ( Config.debugging && this.tc.dbg != null )
 				this.tc.dbg.stop_JavascriptExec("js", (res==null)?null:res.toString());

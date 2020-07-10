@@ -74,7 +74,7 @@ public interface DataFlow {
 	
 //	public static void main(String[] args) {
 //		Set<String> res = extractRefs("is.a  \"xis.\" en is.y.v._z  is.x");
-//		System.out.println("RES:" + res);
+//		logger.debug("RES:" + res);
 //	}
 	
 }

@@ -28,6 +28,8 @@ import javax.management.ObjectName;
 
 import hmi.flipper2.TemplateController;
 
+import static hmi.flipper2.TemplateController.logger;
+
 public class CpuMemoryUsage {
 
 	enum Channel {
@@ -91,7 +93,7 @@ public class CpuMemoryUsage {
 			// returns a percentage value with 1 decimal point precision
 			return ((int) (value * 1000) / 10.0);
 		} catch (Exception e) {
-			System.out.println("EXCEPTION: " + e);
+			logger.error("EXCEPTION: " + e);
 			return 0.0;
 		}
 	}

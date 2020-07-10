@@ -46,6 +46,8 @@ import hmi.flipper2.value.IsJavaValue;
 import hmi.flipper2.value.JavaValueList;
 import hmi.flipper2.value.PersistentJavaValue;
 
+import static hmi.flipper2.TemplateController.logger;
+
 public class Template extends FlipperObject {
 
 	public TemplateFile tf;
@@ -299,7 +301,7 @@ public class Template extends FlipperObject {
 		for(EffectList l : listOfEffectList)
 			res.addAll(l.flowIn());
 		this.dfin = res;
-		System.out.println("TEMPLATE-IN["+id()+"]="+dfin);
+		logger.debug("TEMPLATE-IN["+id()+"]="+dfin);
 		return res;
 	}
 	
@@ -311,7 +313,7 @@ public class Template extends FlipperObject {
 		for (EffectList l : listOfEffectList)
 			res.addAll(l.flowOut());
 		this.dfout = res;
-		System.out.println("TEMPLATE-OUT["+id()+"]="+dfout);
+		logger.debug("TEMPLATE-OUT["+id()+"]="+dfout);
 		return res;
 	}
 	

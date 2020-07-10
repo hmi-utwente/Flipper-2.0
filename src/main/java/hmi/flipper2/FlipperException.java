@@ -28,6 +28,8 @@ import javax.script.ScriptException;
 
 import org.xml.sax.SAXException;
 
+import static hmi.flipper2.TemplateController.logger;
+
 public class FlipperException extends Exception {
 
 	/**
@@ -65,6 +67,7 @@ public class FlipperException extends Exception {
 	public FlipperException(Exception ex, String extra) {
 		_init(ex);
 		this.extra = extra;
+		logger.error(this.extra);
 	}
 	
 	public FlipperException(SAXException ex) {
@@ -97,12 +100,12 @@ public class FlipperException extends Exception {
 	
 	public static void handle(FlipperException e) {
 		if ( e.extra != null )
-			System.err.println(e.extra);
+			logger.error(e.extra);
 		if ( e.currentInfo != null )
-			System.err.println(e.currentInfo);
-		System.err.println("!Caught Exception: "+e.text);
+			logger.error(e.currentInfo);
+		logger.error("!Caught Exception: "+e.text);
 		if (e.stack != null )
-			System.err.println("!Stack: \n"+e.stack);
+			logger.error("!Stack: \n"+e.stack);
 	}
 	
 }

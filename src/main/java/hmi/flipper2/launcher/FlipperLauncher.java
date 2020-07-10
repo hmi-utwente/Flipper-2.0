@@ -39,7 +39,7 @@ public class FlipperLauncher {
     	String flipperPropFile = "flipper.properties";
     	
         if(args.length % 2 != 0){
-        	System.err.println(help);
+        	logger.error(help);
         	System.exit(0);
         }
         
@@ -47,7 +47,7 @@ public class FlipperLauncher {
         	if(args[i].equals("-config")) {
         		flipperPropFile = args[i+1];
         	} else {
-            	System.err.println("Unknown commandline argument: \""+args[i]+" "+args[i+1]+"\".\n"+help);
+            	logger.error("Unknown commandline argument: \""+args[i]+" "+args[i+1]+"\".\n"+help);
             	System.exit(0);
         	}
         }

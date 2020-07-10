@@ -28,6 +28,8 @@ import java.util.Set;
 import hmi.flipper2.Config;
 import hmi.flipper2.FlipperException;
 
+import static hmi.flipper2.TemplateController.logger;
+
 public class JsExpression {
 
 	private static long fcnt = 10000;
@@ -42,7 +44,7 @@ public class JsExpression {
 		this.expr = expr;
 		this.fid = "_f" + fcnt++;
 		String fundef = "var " + this.fid + " = function(" + args + ") { " + String.format(format, expr) + "; };";
-		// System.out.println("FUNDEF: "+fundef);
+		logger.debug("FUNDEF: "+fundef);
 		jse.eval(fundef);
 
 	}

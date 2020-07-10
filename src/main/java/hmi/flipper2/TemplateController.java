@@ -36,6 +36,8 @@ import hmi.flipper2.debugger.FlipperDebugger;
 import hmi.flipper2.effect.EffectList;
 import hmi.flipper2.postgres.Database;
 import hmi.flipper2.sax.SimpleSAXParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is the main Flipper interface class. You can create/modify/destroy Flipper Templatecontollers using this class. 
@@ -47,6 +49,8 @@ import hmi.flipper2.sax.SimpleSAXParser;
  */
 
 public class TemplateController {
+
+	public static Logger logger = LoggerFactory.getLogger(TemplateController.class.getName());
 	
 	/**
 	 * This method creates a new TemplateController.
@@ -103,8 +107,6 @@ public class TemplateController {
 	 *            The name of the existing TemplateController in the Database.
 	 * @param db
 	 *            The Database the TemplateController is stored. When db == null the method does nothing.
-	 * @param jslibs
-	 * 			  String array of additional js libs to preload. 
 	 * @exception FlipperException
 	 *                On all errors.
 	 */
@@ -202,7 +204,7 @@ public class TemplateController {
 	
 	public void setDebugger(FlipperDebugger fd, boolean onoff) {
 		if ( !Config.debugging && fd!=null )
-			System.err.println("WARNING: Setting FlipperDebugger with Config.debugging=false");
+			logger.error("WARNING: Setting FlipperDebugger with Config.debugging=false");
 		this.persistent_dbg = fd;
 		switchDebugger(onoff);
 	}
@@ -324,9 +326,15 @@ public class TemplateController {
 				this.dbg.start_CheckTemplates(this.name, null);
 			}
 			for (Template template : filterTemplates(this.base_templates, templateFilter) ) {
+				long startTime = System.nanoTime();
 					if ( Config.debugging && this.dbg != null )
 						this.dbg.start_CheckTemplate(template.id(), null);
 					changed =  checkPreconditions(template, Behaviour.IMMEDIATE_EFFECT) || changed;
+				long endTime = System.nanoTime();
+				long duration = (endTime - startTime);  //divide by 1000000 to get milliseconds.
+                    if(duration/1000000>50){
+						logger.debug("Duration Template, ID: " + template.id() + " and duration: " + duration/1000000);
+                    }
 //					while ( this.conditional_stack != null ) {
 //						Template toCheck = this.conditional_stack;
 //						this.conditional_stack = this.conditional_stack.pop();

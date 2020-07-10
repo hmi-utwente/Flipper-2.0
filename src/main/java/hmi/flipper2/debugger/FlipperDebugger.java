@@ -20,6 +20,8 @@ package hmi.flipper2.debugger;
 
 import hmi.flipper2.TemplateController;
 
+import static hmi.flipper2.TemplateController.logger;
+
 public class FlipperDebugger {
 	
 	enum Kind {
@@ -38,14 +40,14 @@ public class FlipperDebugger {
 		boolean verbose = false;
 		
 		if ( verbose )
-			System.out.println("#"+s.action.name() + "\t" + s.id + "\t"+pt(s.duration()));
+			logger.info("#"+s.action.name() + "\t" + s.id + "\t"+pt(s.duration()));
 		switch (s.action) {
 		case CheckTemplates: {
-			System.out.println("[");
+			logger.info("[");
 			for (Action a : Action.values()) {
-				System.out.println("\t+ Total Time: "+ String.format("%1$14s", a.name()) + " = " + pt(this.totalTimes[a.ordinal()]));
+				logger.info("\t+ Total Time: "+ String.format("%1$14s", a.name()) + " = " + pt(this.totalTimes[a.ordinal()]));
 			}
-			System.out.println("]");
+			logger.info("]");
 		}
 			break;
 		case CheckTemplate:
@@ -73,12 +75,12 @@ public class FlipperDebugger {
 			state.startTime = System.nanoTime();
 			state.startArg = arg;
 			if ( verbose )
-				System.out.println(kind.name() + "\t" + String.format("%1$14s", action.name()) + "\t" + id);
+				logger.info(kind.name() + "\t" + String.format("%1$14s", action.name()) + "\t" + id);
 		} else {
 			state.stopTime = System.nanoTime();
 			state.stopArg = arg;
 			if ( verbose )
-				System.out.println(kind.name() + "\t" + String.format("%1$14s", action.name())  + "\t" + id + "\t("+pt(state.duration())+")");
+				logger.info(kind.name() + "\t" + String.format("%1$14s", action.name())  + "\t" + id + "\t("+pt(state.duration())+")");
 			this.totalTimes[action.ordinal()] += state.duration();
 			handle_state(state);
 			state = state.pop();

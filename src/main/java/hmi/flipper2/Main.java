@@ -55,7 +55,7 @@ public class Main {
 			int count = 0;
 			boolean changed = true;
 			while( changed && (count < maxcount) ) {
-				System.out.println("\nIS:\n---\n"+tc.getIs("is")+"\n");
+				logger.debug("\nIS:\n---\n"+tc.getIs("is")+"\n");
 				changed = tc.checkTemplates();
 				count++;
 			}
